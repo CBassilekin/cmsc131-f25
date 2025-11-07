@@ -1,3 +1,7 @@
+/** TODO list
+ * remove `amount` validation from credit and debit methods. prefer to not allow constructing a transaction with a negative amount.
+ * 
+ */
 package projects.bank;
 
 public abstract class Account {

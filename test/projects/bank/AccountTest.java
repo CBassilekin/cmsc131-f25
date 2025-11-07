@@ -1,3 +1,6 @@
+/** TODO list
+ * see Account.java comments about validation logic
+ */
 package projects.bank;
 
 import static org.junit.Assert.assertEquals;
@@ -98,7 +101,7 @@ public class AccountTest {
          * Test confirms that credit() increases the account's balance successfully.
          */
         @Test
-        void credit() {
+        void TestCredit() {
                 svaccount.credit(amount);
                 Double expectedResult = svaccount.setNewBalance();
                 assertEquals(
@@ -125,7 +128,7 @@ public class AccountTest {
          * Test confirms that debit() reduces the account's balance successfully.
          */
         @Test
-        void debit() {
+        void TestDebit() {
                 svaccount.debit(amount);
                 Double expectedResult = svaccount.setNewBalance();
                 assertEquals(

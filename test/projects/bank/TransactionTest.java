@@ -1,5 +1,7 @@
 /** comments
  * you'll have to modify some of these tests once the execute methods also take an `Audit` object for input
+ * because you're testing methods from the Transaction class in testConstructorDataValidation, you only need to use, eg, a Deposit. also testing a Withdrawal is redundant and should be removed
+ * 
  */
 package projects.bank;
 

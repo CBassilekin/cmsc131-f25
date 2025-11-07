@@ -1,3 +1,8 @@
+/** comments/TODO
+ * because you've loaded the transactions into this bank's transactions attribute, you don't need to return them. but the code works so it's fine
+ * getTransactionsCount is a more descriptive name than getTransactions
+ * 
+ */
 package projects.bank;
 
 import java.io.File;
@@ -187,7 +192,7 @@ public class Bank {
             throw new IllegalArgumentException("File cannot be null.");
         } else {
             try (
-                    Scanner scanner = new Scanner(new File(transactionFile))) {
+                Scanner scanner = new Scanner(new File(transactionFile))) {
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
                     Transaction trs = Transaction.make(line);
@@ -200,7 +205,7 @@ public class Bank {
             }
         }
         return transactions;
-    }
+    } 
 
     /*
      * This method holds the count of transactions in an array.
@@ -263,9 +268,7 @@ public class Bank {
 
             }
             audit.close();
-        } catch (
-
-        IOException e) {
+        } catch (IOException e) {
             // problem with Audit constructor
             e.printStackTrace();
         }

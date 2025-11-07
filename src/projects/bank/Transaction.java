@@ -1,3 +1,7 @@
+/** TODO list
+ * remove the else if and else blocks from make. the valueOf call will throw for an invalid transaction type, so it's fine to return a deposit in the else block
+ * 
+ */
 package projects.bank;
 
 public abstract class Transaction {
