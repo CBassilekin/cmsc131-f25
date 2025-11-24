@@ -252,18 +252,29 @@ public class Bank {
     public int processTransactions(Transaction[] transactions) {
         int transactionsProcessed = 0;
         try {
+            /** FBK
+             * This is fine, bu tyou could also pass the audit file name as 
+             * an argument to processTransactions
+             */
             Audit audit = new Audit("data/audit.log");
             for (int i = 0; i < transactionsCount; i++) {
-                if (validateAcctExists(transactions[i].getAccountNumber())) {
-                    Account target = accounts[(find(transactions[i].getAccountNumber()))];
-                    if (transactions[i].validate(target, audit)) {
-                        transactions[i].execute(target, audit);
+                /** FBK
+                 * I exracted transactions[i] to a local variable. Your code 
+                 * was correct, but all those [i] references are an opporutnity 
+                 * for a typo bug.
+                 */
+                Transaction tx = transactions[i];
+                if (validateAcctExists(tx.getAccountNumber())) {
+                    Account target = accounts[
+                        find(tx.getAccountNumber())
+                    ];
+                    if (tx.validate(target, audit)) {
+                        tx.execute(target, audit);
                         transactionsProcessed++;
                     }
                 } else {
                     // target account absent
-                    audit.recordNoSuchAccount(transactions[i]);
-
+                    audit.recordNoSuchAccount(tx);
                 }
 
             }

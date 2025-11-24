@@ -60,10 +60,12 @@ public class Audit {
      */
     public void recordNoSuchAccount(Transaction t) {
         write(
-                String.format(
-                        "%s [WARN]: no such account: %s",
-                        lib.Utils.timestamp(),
-                        t.toString()));
+            String.format(
+                "%s [WARN]: no such account: %s",
+                lib.Utils.timestamp(),
+                t.toString()
+            )
+        );
     }
 
     /**
@@ -74,11 +76,13 @@ public class Audit {
      */
     public void recordNonSufficientFunds(Transaction t, Account a) {
         write(
-                String.format(
-                        "%s [WARN]: nonsufficient funds: %s, but account balance is %.2f",
-                        lib.Utils.timestamp(),
-                        t.toString(),
-                        a.getCurrentBalance()));
+            String.format(
+                "%s [WARN]: nonsufficient funds: %s, but account balance is %.2f",
+                lib.Utils.timestamp(),
+                t.toString(),
+                a.getCurrentBalance()
+            )
+        );
     }
 
     /**
@@ -89,10 +93,12 @@ public class Audit {
      */
     public void recordExecute(Transaction t, Account a) {
         write(
-                String.format(
-                        "%s [INFO]: %s, ending account balance is now %.2f",
-                        lib.Utils.timestamp(),
-                        t.toString(),
-                        a.setNewBalance()));
+            String.format(
+                "%s [INFO]: %s, ending account balance is now %.2f",
+                lib.Utils.timestamp(),
+                t.toString(),
+                a.setNewBalance()
+            )
+        );
     }
 }
