@@ -25,12 +25,44 @@ public class Cell {
 
     private final Coords coords;
 
-    public Cell(Coords c) {
+    // YB added the cell' extra attributes: 'status', 'explored', neighborsCount'
+    // and 'neighbors'
+    private final CellStatus status;
+    private boolean explored = false;
+    public Coords[] neighbors = new Coords[4];
+
+    // YB added the cellStatus as part of the constructor
+    public Cell(Coords c, CellStatus cs) {
+        if ((c == null) || (cs == null)) {
+
+            throw new IllegalArgumentException("this parameter cannot be empty.");
+        }
+
         coords = c;
+        status = cs;
+
     }
 
+    // this getter method returns the Cell status
     public Coords getCoords() {
         return coords;
+    }
+
+    // this getter method returns the Cell status
+    public CellStatus getStatus() {
+        return status;
+
+    }
+
+    // this method returns the explored status of a cell
+    public boolean getTraversalFlag() {
+        return explored;
+    }
+
+    // YB added this method to help return an array of all neighbors of a cell
+    public Coords[] getNeighbors() {
+        // this method is called in the Maze class.
+        return neighbors;
     }
 
 }
