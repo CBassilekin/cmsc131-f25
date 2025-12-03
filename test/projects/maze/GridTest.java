@@ -6,32 +6,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class GridTest {
-    private Cell[] cells = new Cell[] { new Cell(new Coords(0, 0), CellStatus.E),
-            new Cell(new Coords(1, 1), CellStatus.S) };
+    private Cell[] cells; 
     private Grid grid;
 
-    /*
-     * Setting up our account to be used or not
-     * with each test.
-     * Amount is set for credit() and debit() methods
-     */
-    @BeforeEach
-    void setupGrid() {
-        grid = new Grid(2);
-        grid.insertCell(cells[0]);
-        grid.insertCell(cells[1]);
-    }
-
-    /**
-     * Test method verifies that a cell is successfully inserted
-     * in the grid and can be retrieved from it.
-     */
-    @Test
-    public void testInsertAndRetrieveFirstCell() {
-
-        Cell retrieved = grid.getCell(cells[0].getCoords());
-        assertNotNull(retrieved);
-    }
+/**
+ * Test method verifies that a cell is successfully inserted
+ * in the grid and can be retrieved from it.
+*/
+@Test
+public void testInsertAndRetrieveFirstCell() {
+    Cell[] cells = new Cell[] { 
+        new Cell(new Coords(0, 0), CellStatus.E),
+        new Cell(new Coords(1, 1), CellStatus.S) 
+    };
+    Grid grid = new Grid(2);
+    grid.insertCell(cells[0]);
+    grid.insertCell(cells[1]);
+    Cell retrieved = grid.getCell(cells[0].getCoords());
+    assertNotNull(retrieved);
+}
 
     /**
      * test method verofies that Cell Count is exact after cells are inserted
@@ -40,7 +33,13 @@ public class GridTest {
      */
     @Test
     public void testCellCountAfterInsert() {
-
+        Cell[] cells = new Cell[] { 
+            new Cell(new Coords(0, 0), CellStatus.E),
+            new Cell(new Coords(1, 1), CellStatus.S) 
+        };
+        Grid grid = new Grid(2);
+        grid.insertCell(cells[0]);
+        grid.insertCell(cells[1]);
         assertEquals(2, grid.getCellCount());
     }
 
@@ -51,7 +50,13 @@ public class GridTest {
      */
     @Test
     public void testGetAllCellsReturnsCorrectCount() {
-
+        Cell[] cells = new Cell[] { 
+            new Cell(new Coords(0, 0), CellStatus.E),
+            new Cell(new Coords(1, 1), CellStatus.S) 
+        };
+        Grid grid = new Grid(2);
+        grid.insertCell(cells[0]);
+        grid.insertCell(cells[1]);
         cells = grid.getAllCells();
         assertEquals(2, cells.length);
 
@@ -66,7 +71,13 @@ public class GridTest {
      */
     @Test
     public void testInsertAtCapacityBoundary() {
-
+        Cell[] cells = new Cell[] { 
+            new Cell(new Coords(0, 0), CellStatus.E),
+            new Cell(new Coords(1, 1), CellStatus.S) 
+        };
+        Grid grid = new Grid(2);
+        grid.insertCell(cells[0]);
+        grid.insertCell(cells[1]);
         assertFalse(grid.insertCell(new Cell(new Coords(3, 3), CellStatus.S)));
 
     }
@@ -77,7 +88,13 @@ public class GridTest {
      */
     @Test
     public void getCellReturnsCorrectCell() {
-
+        Cell[] cells = new Cell[] { 
+            new Cell(new Coords(0, 0), CellStatus.E),
+            new Cell(new Coords(1, 1), CellStatus.S) 
+        };
+        Grid grid = new Grid(2);
+        grid.insertCell(cells[0]);
+        grid.insertCell(cells[1]);
         Cell expectedCell = grid.getCell(cells[0].getCoords());
         assertNotNull(expectedCell);
         assertTrue(cells[0].getCoords().equals(expectedCell.getCoords()));
@@ -94,6 +111,13 @@ public class GridTest {
      */
     @Test
     public void getCellReturnsNull() {
+        Cell[] cells = new Cell[] { 
+            new Cell(new Coords(0, 0), CellStatus.E),
+            new Cell(new Coords(1, 1), CellStatus.S) 
+        };
+        Grid grid = new Grid(2);
+        grid.insertCell(cells[0]);
+        grid.insertCell(cells[1]);
         assertNull(grid.getCell(new Coords(2, 1)));
 
     }
@@ -104,7 +128,13 @@ public class GridTest {
      */
     @Test
     public void getAllCellsReturnsCorrectCells() {
-
+        Cell[] cells = new Cell[] { 
+            new Cell(new Coords(0, 0), CellStatus.E),
+            new Cell(new Coords(1, 1), CellStatus.S) 
+        };
+        Grid grid = new Grid(2);
+        grid.insertCell(cells[0]);
+        grid.insertCell(cells[1]);
         Cell[] expectedCells = grid.getAllCells();
         assertTrue(expectedCells[0].equals(grid.getCell(new Coords(0, 0))));
         assertTrue(expectedCells[1].equals(grid.getCell(new Coords(1, 1))));

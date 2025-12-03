@@ -50,14 +50,25 @@ public class Maze {
 
             for (int i = 0; i < grid.getCellCount(); i++) {
 
+                /* DUSEL
+                    You could make this more testable by having a method 
+                    that takes a Cell as input and returns a Coords[] as output
+                    containing the coordinates of neighboring cells found in 
+                    this maze's grid. This would work well with your 
+                    MazeTest::getNeighborsReturnsCorrectArray and 
+                    MazeTest::getNeighborsReturnsEmptytArray
+                */
+
                 // we can't find this cell in the grid
                 if (lookUpCell.getCoords().equals(grid.getAllCells()[i].getCoords())) {
 
                     // we can now find the cell in the grid.
 
                     // determining its four neighbors' coordinates.
-                    lookUpCell.neighbors[0] = new Coords(lookUpCell.getCoords().getRow(),
-                            lookUpCell.getCoords().getCol() + 1);
+                    lookUpCell.neighbors[0] = new Coords(
+                        lookUpCell.getCoords().getRow(),
+                        lookUpCell.getCoords().getCol() + 1
+                    );
 
                     // Data validation for the first neighbor at row = 0.
                     if (lookUpCell.getCoords().getCol() > 0) {

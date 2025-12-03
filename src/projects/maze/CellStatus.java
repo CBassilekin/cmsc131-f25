@@ -1,4 +1,4 @@
-package projects.Maze;
+package projects.maze;
 
 // YB added this variable to allow for cells statuts to take different values,
 

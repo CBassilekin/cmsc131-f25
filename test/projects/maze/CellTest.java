@@ -1,4 +1,4 @@
-package projects.Maze;
+package projects.maze;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,26 +72,6 @@ public class CellTest {
     public void getTraversalFlagReturnsFalseByDefault() {
         cell = new Cell(new Coords(0, 0), CellStatus.S);
         assertFalse(cell.getTraversalFlag());
-    }
-
-    /**
-     * test method return the neighbors of an existing cell
-     * in an array
-     * and verifies that the correct coordinates are found.
-     */
-    @Test
-    public void getNeighborsReturnsCorrectArray() {
-        // we will be using the test coverage of discoverAndSetupNeighbors()
-
-    }
-
-    /**
-     * test method should return an empty array when a Cell is not
-     * inserted.
-     */
-    @Test
-    public void getNeighborsReturnsEmptytArray() {
-        // we will be using the test coverage of discoverAndSetupNeighbors()
     }
 
 }

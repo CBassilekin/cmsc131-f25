@@ -1,4 +1,4 @@
-package projects.Maze;
+package projects.maze;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -327,5 +327,25 @@ public class MazeTest {
                     maze.serialize(null);
                 });
         assertEquals("Filename cannot be null.", e.getMessage());
+    }
+
+    /**
+     * test method return the neighbors of an existing cell
+     * in an array
+     * and verifies that the correct coordinates are found.
+     */
+    @Test
+    public void getNeighborsReturnsCorrectArray() {
+        // we will be using the test coverage of discoverAndSetupNeighbors()
+
+    }
+
+    /**
+     * test method should return an empty array when a Cell is not
+     * inserted.
+     */
+    @Test
+    public void getNeighborsReturnsEmptytArray() {
+        // we will be using the test coverage of discoverAndSetupNeighbors()
     }
 }
