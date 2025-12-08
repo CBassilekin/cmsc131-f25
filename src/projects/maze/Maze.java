@@ -30,11 +30,48 @@ public class Maze {
     }
 
     /**
-     * aceesor method to return the size of a maze
+     * accessor method to return the size of a maze
      * 
      */
     public int size() {
         return size;
+    }
+
+    public Coords[] setNeighbors(Cell cell) {
+        Coords[] maybeNeighbors = new Coords[4];
+        Cell lookUpCell = cell;
+
+        if (lookUpCell != null) {
+
+            for (int i = 0; i < grid.getCellCount(); i++) {
+
+                // we can now find the cell in the grid.
+
+                // determining its four neighbors' coordinates.
+                maybeNeighbors[0] = new Coords(
+                        lookUpCell.getCoords().getRow(),
+                        lookUpCell.getCoords().getCol() + 1);
+
+                // Data validation for the first neighbor at row = 0.
+                if (lookUpCell.getCoords().getCol() > 0) {
+                    maybeNeighbors[1] = new Coords(lookUpCell.getCoords().getRow(),
+                            lookUpCell.getCoords().getCol() - 1);
+                } else
+                    maybeNeighbors[1] = null;
+
+                maybeNeighbors[3] = new Coords(lookUpCell.getCoords().getRow() + 1,
+                        lookUpCell.getCoords().getCol());
+
+                // Data validation for the third neighbor at col = 0.
+                if (lookUpCell.getCoords().getRow() > 0) {
+                    maybeNeighbors[2] = new Coords(lookUpCell.getCoords().getRow() - 1,
+                            lookUpCell.getCoords().getCol());
+                } else
+                    maybeNeighbors[2] = null;
+            }
+        }
+
+        return maybeNeighbors;
     }
 
     /**
@@ -43,56 +80,52 @@ public class Maze {
      * 
      */
 
-    public void discoverAndSetupNeighbors(Cell cell) {
-        Cell lookUpCell = cell;
+    public void discoverAndSetupNeighbors(Coords[] maybeNeighbors) {
 
-        if (lookUpCell != null) {
+        /*
+         * DUSEL
+         * You could make this more testable by having a method
+         * that takes a Cell as input and returns a Coords[] as output
+         * containing the coordinates of neighboring cells found in
+         * this maze's grid. This would work well with your
+         * MazeTest::getNeighborsReturnsCorrectArray and
+         * MazeTest::getNeighborsReturnsEmptytArray
+         */
+        if (maybeNeighbors != null) {
 
-            for (int i = 0; i < grid.getCellCount(); i++) {
+            Cell lookUpCell = null;
 
-                /* DUSEL
-                    You could make this more testable by having a method 
-                    that takes a Cell as input and returns a Coords[] as output
-                    containing the coordinates of neighboring cells found in 
-                    this maze's grid. This would work well with your 
-                    MazeTest::getNeighborsReturnsCorrectArray and 
-                    MazeTest::getNeighborsReturnsEmptytArray
-                */
+            // determining its four neighbors' coordinates as they exist or not in the grid.
+            for (int j = 0; j < grid.getCellCount(); j++) {
+                lookUpCell = grid.getAllCells()[j];
 
-                // we can't find this cell in the grid
-                if (lookUpCell.getCoords().equals(grid.getAllCells()[i].getCoords())) {
+                // Let's find the neighbor located West
+                if (lookUpCell.getCoords().equals(maybeNeighbors[0])) {
+                    lookUpCell.neighbors[0] = maybeNeighbors[0];
+                } else
+                    lookUpCell.neighbors[0] = null;
 
-                    // we can now find the cell in the grid.
+                // Let's find the neighbor located East
+                if (lookUpCell.getCoords().equals(maybeNeighbors[1])) {
+                    lookUpCell.neighbors[1] = maybeNeighbors[1];
+                } else
+                    lookUpCell.neighbors[1] = null;
 
-                    // determining its four neighbors' coordinates.
-                    lookUpCell.neighbors[0] = new Coords(
-                        lookUpCell.getCoords().getRow(),
-                        lookUpCell.getCoords().getCol() + 1
-                    );
+                // let's find the neighgbor located North
+                if (lookUpCell.getCoords().equals(maybeNeighbors[2])) {
+                    lookUpCell.neighbors[2] = maybeNeighbors[2];
+                } else
+                    lookUpCell.neighbors[2] = null;
 
-                    // Data validation for the first neighbor at row = 0.
-                    if (lookUpCell.getCoords().getCol() > 0) {
-                        lookUpCell.neighbors[1] = new Coords(lookUpCell.getCoords().getRow(),
-                                lookUpCell.getCoords().getRow() - 1);
-                    } else
-                        lookUpCell.neighbors[1] = null;
-
-                    lookUpCell.neighbors[3] = new Coords(lookUpCell.getCoords().getRow() + 1,
-                            lookUpCell.getCoords().getCol());
-
-                    // Data validation for the third neighbor at col = 0.
-                    if (lookUpCell.getCoords().getRow() > 0) {
-                        lookUpCell.neighbors[2] = new Coords(lookUpCell.getCoords().getRow() - 1,
-                                lookUpCell.getCoords().getCol());
-                    } else
-                        lookUpCell.neighbors[2] = null;
-                    break;
-                }
+                // let's find the neighbor located North of the cell
+                if (lookUpCell.getCoords().equals(maybeNeighbors[3])) {
+                    lookUpCell.neighbors[3] = maybeNeighbors[3];
+                } else
+                    lookUpCell.neighbors[3] = null;
 
             }
-        } else {
-            throw new IllegalArgumentException("Please enter a valid cell, cell cannot be null.");
         }
+        throw new IllegalArgumentException("Please enter a valid value.");
     }
 
     /**
