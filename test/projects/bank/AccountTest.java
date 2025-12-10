@@ -1,6 +1,4 @@
-/** TODO list
- * see Account.java comments about validation logic
- */
+
 package projects.bank;
 
 import static org.junit.Assert.assertEquals;
@@ -109,22 +107,6 @@ public class AccountTest {
         }
 
         /*
-         * Test confirms that credit() throws an exception on negative amount value.
-         */
-        @Test
-        void creditThrowsOnNegativeValue() {
-                amount = -50.00;
-                Exception exception = assertThrows(
-                                IllegalArgumentException.class,
-                                () -> {
-                                        svaccount.credit(amount);
-                                });
-                assertEquals(
-                                "amount must be positive.",
-                                exception.getMessage());
-        }
-
-        /*
          * Test confirms that debit() reduces the account's balance successfully.
          */
         @Test
@@ -135,19 +117,4 @@ public class AccountTest {
                                 8011.00, expectedResult);
         }
 
-        /*
-         * Test confirms that debit() throws an exception on negative amount value.
-         */
-        @Test
-        void debitThrowsOnNegativeValue() {
-                amount = -50.00;
-                Exception exception = assertThrows(
-                                IllegalArgumentException.class,
-                                () -> {
-                                        svaccount.debit(amount);
-                                });
-                assertEquals(
-                                "amount must be positive.",
-                                exception.getMessage());
-        }
 }// end: class AccountTest

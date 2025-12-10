@@ -64,4 +64,7 @@ public class Grid {
         return allCells;
     }
 
+    public boolean leadsToExit(Cell cell) {
+        return true;
+    }
 }

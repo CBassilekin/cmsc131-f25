@@ -264,12 +264,12 @@ public class BankTest {
         void loadTransactionsSuccessTest() {
                 // Our test file holds 3 transaction
                 // Two transactions are valids but not the last one
-                // Also serve as a test for the "getTransactions()" method
+                // Also serve as a test for the "getTransactionsCount()" method
                 String transactionsFilename = "data/testtransactions.csv";
                 trs = bank.loadTransactions(transactionsFilename);
                 assertEquals(
                                 3,
-                                bank.getTransactions());
+                                bank.getTransactionsCount());
 
                 // check validity of stored transaction
                 int i = 0;
@@ -314,9 +314,9 @@ public class BankTest {
          */
         @Test
         void validateAcctExistsSuccessTest() {
-            bank.add(svacct);
-            boolean expectedResult = bank.validateAcctExists(transac.getAccountNumber());
-            assertEquals(true, expectedResult);
+                bank.add(svacct);
+                boolean expectedResult = bank.validateAcctExists(transac.getAccountNumber());
+                assertEquals(true, expectedResult);
         }
 
         /*
@@ -325,10 +325,9 @@ public class BankTest {
          * An invaid account is passed in the method and should return false.
          */
         void validateAcctExistsFailureTest() {
-            boolean expectedResult = bank.validateAcctExists(
-                "invalidaccount"
-            );
-            assertEquals(false, expectedResult);
+                boolean expectedResult = bank.validateAcctExists(
+                                "invalidaccount");
+                assertEquals(false, expectedResult);
         }
 
         /*
@@ -338,10 +337,10 @@ public class BankTest {
          */
         @Test
         void testProcessTransactionsSuccess() {
-            bank.add(svacct);
-            String transactionsFilename = "data/testtransactions.csv";
-            trs = bank.loadTransactions(transactionsFilename);
-            assertEquals(1, bank.processTransactions(trs));
+                bank.add(svacct);
+                String transactionsFilename = "data/testtransactions.csv";
+                trs = bank.loadTransactions(transactionsFilename);
+                assertEquals(1, bank.processTransactions(trs));
         }
 
         /*

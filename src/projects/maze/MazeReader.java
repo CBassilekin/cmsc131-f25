@@ -51,7 +51,7 @@ public class MazeReader {
                 row++; // new row
             }
             scanner.close();
-            maze.discoverAndSetupNeighbors(insertCell);
+            maze.discoverNeighborsInGrid(insertCell);
             return maze;
         } catch (FileNotFoundException e) {
             e.printStackTrace();

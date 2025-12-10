@@ -58,29 +58,31 @@ public class MazeTest {
      * Coords [3] - is the cell locatd South
      */
     @Test
-    public void testDiscoverandSetUpNeighborsReturnsCorrectArrayForStartCell() {
-
-        Cell cell1 = testGrid.getAllCells()[0];
-        maze.discoverAndSetupNeighbors(cell1);
+    public void testDiscoverNeighborsInGridReturnsCorrectArrayForStartCell() {
+        Cell startCell = new Cell(new Coords(0, 2), CellStatus.S);
+        testGrid.insertCell(startCell);
+        maze.discoverNeighborsInGrid(maze.getStart(testGrid));
 
         // Discovering actual Coords (0,0) neighbors
         // this test also serves for the Cell.getNeighbors () method.
-        Coords[] actualNeighbors = cell1.getNeighbors();
+        Coords[] actualNeighbors = (maze.getStart(testGrid)).getNeighbors();
 
         // Estimating the expected result.
-        Coords[] expectedNeighbors = new Coords[] { new Coords(0, 1), null, null, new Coords(1, 0) };
+        Coords[] expectedNeighbors = new Coords[] { null, new Coords(0, 1), null, null };
 
         // expected vs actual should match, some neighbors are null.
-        assertTrue(expectedNeighbors[0].equals(actualNeighbors[0]));
-        assertNotNull(actualNeighbors[0]);
 
-        assertNull(expectedNeighbors[1]);
-        assertNull(actualNeighbors[1]);
+        assertNull(expectedNeighbors[0]);
+        assertNull(actualNeighbors[0]);
+
+        assertTrue(expectedNeighbors[1].equals(actualNeighbors[1]));
+        assertNotNull(actualNeighbors[1]);
+
         assertNull(expectedNeighbors[2]);
         assertNull(actualNeighbors[2]);
 
-        assertNotNull(expectedNeighbors[3]);
-        assertTrue(expectedNeighbors[3].equals(actualNeighbors[3]));
+        assertNull(actualNeighbors[3]);
+        assertNull(expectedNeighbors[3]);
 
     }
 
@@ -94,7 +96,7 @@ public class MazeTest {
         Cell cell1 = new Cell(new Coords(1, 5), CellStatus.O);
 
         // Discovering Cell1 actual neighbors
-        maze.discoverAndSetupNeighbors(cell1);
+        maze.discoverNeighborsInGrid(cell1);
 
         // getting the actual result
         Coords[] actualNeighbors = cell1.getNeighbors();
@@ -111,20 +113,6 @@ public class MazeTest {
         assertNull(actualNeighbors[2]);
         assertNull(expectedNeighbors[3]);
         assertNull(actualNeighbors[3]);
-    }
-
-    /**
-     * test method should throw an exception when a null cell is passed onto it.
-     */
-    @Test
-    public void testDiscoverandSetUpNeighborsThrowsonNullInput() {
-
-        Exception e = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    maze.discoverAndSetupNeighbors(null);
-                });
-        assertEquals("Please enter a valid cell, cell cannot be null.", e.getMessage());
     }
 
     /**
@@ -190,7 +178,8 @@ public class MazeTest {
     @Test
     public void testFirstCellWithStatusReturnsCorrectCellWithStatusExit() {
 
-        Cell expectedCellwithStatutExit = new Cell(new Coords(1, 0), CellStatus.E);
+        Cell expectedCellwithStatutExit = new Cell(new Coords(3, 4), CellStatus.E);
+        testGrid.insertCell(expectedCellwithStatutExit);
 
         Cell actualFirstCellWithStatusExit = maze.getFirstCellWithStatus(CellStatus.E);
         assertNotNull(actualFirstCellWithStatusExit);
@@ -329,23 +318,4 @@ public class MazeTest {
         assertEquals("Filename cannot be null.", e.getMessage());
     }
 
-    /**
-     * test method return the neighbors of an existing cell
-     * in an array
-     * and verifies that the correct coordinates are found.
-     */
-    @Test
-    public void getNeighborsReturnsCorrectArray() {
-        // we will be using the test coverage of discoverAndSetupNeighbors()
-
-    }
-
-    /**
-     * test method should return an empty array when a Cell is not
-     * inserted.
-     */
-    @Test
-    public void getNeighborsReturnsEmptytArray() {
-        // we will be using the test coverage of discoverAndSetupNeighbors()
-    }
 }

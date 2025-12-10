@@ -1,7 +1,4 @@
-/** TODO list
- * remove `amount` validation from credit and debit methods. prefer to not allow constructing a transaction with a negative amount.
- * 
- */
+
 package projects.bank;
 
 public abstract class Account {
@@ -121,9 +118,6 @@ public abstract class Account {
      * @throws IllegalArgumentException if the amount is negative.
      */
     public void credit(double amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("amount must be positive.");
-        }
         newBal = currentBalance + amount;
     }
 
@@ -137,12 +131,8 @@ public abstract class Account {
      * 
      */
     public void debit(double amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("amount must be positive.");
-        } else {
 
-            newBal = currentBalance - amount;
-        }
+        newBal = currentBalance - amount;
     }
 
     /**

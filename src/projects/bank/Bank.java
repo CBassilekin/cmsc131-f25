@@ -1,8 +1,4 @@
-/** comments/TODO
- * because you've loaded the transactions into this bank's transactions attribute, you don't need to return them. but the code works so it's fine
- * getTransactionsCount is a more descriptive name than getTransactions
- * 
- */
+
 package projects.bank;
 
 import java.io.File;
@@ -192,7 +188,7 @@ public class Bank {
             throw new IllegalArgumentException("File cannot be null.");
         } else {
             try (
-                Scanner scanner = new Scanner(new File(transactionFile))) {
+                    Scanner scanner = new Scanner(new File(transactionFile))) {
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
                     Transaction trs = Transaction.make(line);
@@ -205,7 +201,7 @@ public class Bank {
             }
         }
         return transactions;
-    } 
+    }
 
     /*
      * This method holds the count of transactions in an array.
@@ -214,7 +210,7 @@ public class Bank {
      * loaded from the csv transactions file.
      * 
      */
-    public int getTransactions() {
+    public int getTransactionsCount() {
         return transactionsCount;
     }
 
@@ -252,22 +248,22 @@ public class Bank {
     public int processTransactions(Transaction[] transactions) {
         int transactionsProcessed = 0;
         try {
-            /** FBK
-             * This is fine, bu tyou could also pass the audit file name as 
+            /**
+             * FBK
+             * This is fine, bu tyou could also pass the audit file name as
              * an argument to processTransactions
              */
             Audit audit = new Audit("data/audit.log");
             for (int i = 0; i < transactionsCount; i++) {
-                /** FBK
-                 * I exracted transactions[i] to a local variable. Your code 
-                 * was correct, but all those [i] references are an opporutnity 
+                /**
+                 * FBK
+                 * I exracted transactions[i] to a local variable. Your code
+                 * was correct, but all those [i] references are an opporutnity
                  * for a typo bug.
                  */
                 Transaction tx = transactions[i];
                 if (validateAcctExists(tx.getAccountNumber())) {
-                    Account target = accounts[
-                        find(tx.getAccountNumber())
-                    ];
+                    Account target = accounts[find(tx.getAccountNumber())];
                     if (tx.validate(target, audit)) {
                         tx.execute(target, audit);
                         transactionsProcessed++;

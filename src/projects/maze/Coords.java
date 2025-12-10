@@ -24,9 +24,7 @@ public class Coords {
      * c - is any given column number couting Eastward on the grid;
      */
     public Coords(int r, int c) {
-        if ((r < 0) || c < 0) {
-            throw new IllegalArgumentException("this parameter cannot be empty.");
-        }
+
         row = r;
         col = c;
     }

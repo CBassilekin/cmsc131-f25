@@ -1,30 +1,26 @@
 package projects.maze;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class GridTest {
-    private Cell[] cells; 
-    private Grid grid;
 
-/**
- * Test method verifies that a cell is successfully inserted
- * in the grid and can be retrieved from it.
-*/
-@Test
-public void testInsertAndRetrieveFirstCell() {
-    Cell[] cells = new Cell[] { 
-        new Cell(new Coords(0, 0), CellStatus.E),
-        new Cell(new Coords(1, 1), CellStatus.S) 
-    };
-    Grid grid = new Grid(2);
-    grid.insertCell(cells[0]);
-    grid.insertCell(cells[1]);
-    Cell retrieved = grid.getCell(cells[0].getCoords());
-    assertNotNull(retrieved);
-}
+    /**
+     * Test method verifies that a cell is successfully inserted
+     * in the grid and can be retrieved from it.
+     */
+    @Test
+    public void testInsertAndRetrieveFirstCell() {
+        Cell[] cells = new Cell[] {
+                new Cell(new Coords(0, 0), CellStatus.E),
+                new Cell(new Coords(1, 1), CellStatus.S)
+        };
+        Grid grid = new Grid(2);
+        grid.insertCell(cells[0]);
+        grid.insertCell(cells[1]);
+        Cell retrieved = grid.getCell(cells[0].getCoords());
+        assertNotNull(retrieved);
+    }
 
     /**
      * test method verofies that Cell Count is exact after cells are inserted
@@ -33,9 +29,9 @@ public void testInsertAndRetrieveFirstCell() {
      */
     @Test
     public void testCellCountAfterInsert() {
-        Cell[] cells = new Cell[] { 
-            new Cell(new Coords(0, 0), CellStatus.E),
-            new Cell(new Coords(1, 1), CellStatus.S) 
+        Cell[] cells = new Cell[] {
+                new Cell(new Coords(0, 0), CellStatus.E),
+                new Cell(new Coords(1, 1), CellStatus.S)
         };
         Grid grid = new Grid(2);
         grid.insertCell(cells[0]);
@@ -50,9 +46,9 @@ public void testInsertAndRetrieveFirstCell() {
      */
     @Test
     public void testGetAllCellsReturnsCorrectCount() {
-        Cell[] cells = new Cell[] { 
-            new Cell(new Coords(0, 0), CellStatus.E),
-            new Cell(new Coords(1, 1), CellStatus.S) 
+        Cell[] cells = new Cell[] {
+                new Cell(new Coords(0, 0), CellStatus.E),
+                new Cell(new Coords(1, 1), CellStatus.S)
         };
         Grid grid = new Grid(2);
         grid.insertCell(cells[0]);
@@ -71,9 +67,9 @@ public void testInsertAndRetrieveFirstCell() {
      */
     @Test
     public void testInsertAtCapacityBoundary() {
-        Cell[] cells = new Cell[] { 
-            new Cell(new Coords(0, 0), CellStatus.E),
-            new Cell(new Coords(1, 1), CellStatus.S) 
+        Cell[] cells = new Cell[] {
+                new Cell(new Coords(0, 0), CellStatus.E),
+                new Cell(new Coords(1, 1), CellStatus.S)
         };
         Grid grid = new Grid(2);
         grid.insertCell(cells[0]);
@@ -88,11 +84,12 @@ public void testInsertAndRetrieveFirstCell() {
      */
     @Test
     public void getCellReturnsCorrectCell() {
-        Cell[] cells = new Cell[] { 
-            new Cell(new Coords(0, 0), CellStatus.E),
-            new Cell(new Coords(1, 1), CellStatus.S) 
-        };
         Grid grid = new Grid(2);
+        Cell[] cells = new Cell[] {
+                new Cell(new Coords(0, 0), CellStatus.E),
+                new Cell(new Coords(1, 1), CellStatus.S)
+        };
+
         grid.insertCell(cells[0]);
         grid.insertCell(cells[1]);
         Cell expectedCell = grid.getCell(cells[0].getCoords());
@@ -111,9 +108,9 @@ public void testInsertAndRetrieveFirstCell() {
      */
     @Test
     public void getCellReturnsNull() {
-        Cell[] cells = new Cell[] { 
-            new Cell(new Coords(0, 0), CellStatus.E),
-            new Cell(new Coords(1, 1), CellStatus.S) 
+        Cell[] cells = new Cell[] {
+                new Cell(new Coords(0, 0), CellStatus.E),
+                new Cell(new Coords(1, 1), CellStatus.S)
         };
         Grid grid = new Grid(2);
         grid.insertCell(cells[0]);
@@ -128,9 +125,9 @@ public void testInsertAndRetrieveFirstCell() {
      */
     @Test
     public void getAllCellsReturnsCorrectCells() {
-        Cell[] cells = new Cell[] { 
-            new Cell(new Coords(0, 0), CellStatus.E),
-            new Cell(new Coords(1, 1), CellStatus.S) 
+        Cell[] cells = new Cell[] {
+                new Cell(new Coords(0, 0), CellStatus.E),
+                new Cell(new Coords(1, 1), CellStatus.S)
         };
         Grid grid = new Grid(2);
         grid.insertCell(cells[0]);

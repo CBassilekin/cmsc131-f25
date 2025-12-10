@@ -1,7 +1,4 @@
-/** TODO list
- * remove the else if and else blocks from make. the valueOf call will throw for an invalid transaction type, so it's fine to return a deposit in the else block
- * 
- */
+
 package projects.bank;
 
 public abstract class Transaction {
@@ -101,19 +98,18 @@ public abstract class Transaction {
         if (line == null) {
             throw new IllegalArgumentException("line must not be null.");
         }
+
         String[] token = line.split(",");
         TransactionType type = TransactionType.valueOf(token[0].toUpperCase());
         String id = token[1];
         Double amount = Double.parseDouble(token[2]);
+        Transaction dep = new Deposit(id, amount);
         if (type == TransactionType.WITHDRAWAL) {
             Transaction wdraw = new Withdrawal(id, amount);
             return wdraw;
-        } else if (type == TransactionType.DEPOSIT) {
-            Transaction dep = new Deposit(id, amount);
+        } else
             return dep;
-        } else {
-            throw new IllegalArgumentException("Invalid transaction type.");
-        }
+
     }
 
     /*

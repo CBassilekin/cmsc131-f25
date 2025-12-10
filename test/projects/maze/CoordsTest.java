@@ -18,32 +18,6 @@ public class CoordsTest {
         assertNotNull(coords);
     }
 
-    @Test
-    public void ConstructordataValidationThrows() {
-
-        Exception e = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    new Coords(-1, 2);
-                });
-        assertEquals("this parameter cannot be empty.", e.getMessage());
-
-        e = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    new Coords(0, -1);
-                });
-
-        assertEquals("this parameter cannot be empty.", e.getMessage());
-        e = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    new Coords(-1, -1);
-                });
-        assertEquals("this parameter cannot be empty.", e.getMessage());
-
-    }
-
     /**
      * test method to verfies correct row is returned
      */

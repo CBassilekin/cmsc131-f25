@@ -20,11 +20,13 @@ import java.io.IOException;
 public class Maze {
 
     // attributes - grid will help build our maze.
+
     private Grid grid;
     private int size;
 
     // Maze constructor - maximum number of cells
     public Maze(int maxCells) {
+
         grid = new Grid(maxCells);
         size = maxCells;
     }
@@ -39,38 +41,24 @@ public class Maze {
 
     public Coords[] setNeighbors(Cell cell) {
         Coords[] maybeNeighbors = new Coords[4];
-        Cell lookUpCell = cell;
 
-        if (lookUpCell != null) {
+        if (grid.getCell(cell.getCoords()) == null) {
+            return null;
+        } else {
 
-            for (int i = 0; i < grid.getCellCount(); i++) {
+            // determining its four neighbors' coordinates
+            // in this order EWSN.
+            maybeNeighbors[0] = new Coords(
+                    cell.getCoords().getRow(),
+                    cell.getCoords().getCol() + 1);
+            maybeNeighbors[1] = new Coords(cell.getCoords().getRow(),
+                    cell.getCoords().getCol() - 1);
+            maybeNeighbors[2] = new Coords(cell.getCoords().getRow() + 1,
+                    cell.getCoords().getCol());
+            maybeNeighbors[3] = new Coords(cell.getCoords().getRow() - 1,
+                    cell.getCoords().getCol());
 
-                // we can now find the cell in the grid.
-
-                // determining its four neighbors' coordinates.
-                maybeNeighbors[0] = new Coords(
-                        lookUpCell.getCoords().getRow(),
-                        lookUpCell.getCoords().getCol() + 1);
-
-                // Data validation for the first neighbor at row = 0.
-                if (lookUpCell.getCoords().getCol() > 0) {
-                    maybeNeighbors[1] = new Coords(lookUpCell.getCoords().getRow(),
-                            lookUpCell.getCoords().getCol() - 1);
-                } else
-                    maybeNeighbors[1] = null;
-
-                maybeNeighbors[3] = new Coords(lookUpCell.getCoords().getRow() + 1,
-                        lookUpCell.getCoords().getCol());
-
-                // Data validation for the third neighbor at col = 0.
-                if (lookUpCell.getCoords().getRow() > 0) {
-                    maybeNeighbors[2] = new Coords(lookUpCell.getCoords().getRow() - 1,
-                            lookUpCell.getCoords().getCol());
-                } else
-                    maybeNeighbors[2] = null;
-            }
         }
-
         return maybeNeighbors;
     }
 
@@ -80,52 +68,40 @@ public class Maze {
      * 
      */
 
-    public void discoverAndSetupNeighbors(Coords[] maybeNeighbors) {
+    public void discoverNeighborsInGrid(Cell lookUpCell) {
 
-        /*
-         * DUSEL
-         * You could make this more testable by having a method
-         * that takes a Cell as input and returns a Coords[] as output
-         * containing the coordinates of neighboring cells found in
-         * this maze's grid. This would work well with your
-         * MazeTest::getNeighborsReturnsCorrectArray and
-         * MazeTest::getNeighborsReturnsEmptytArray
-         */
-        if (maybeNeighbors != null) {
+        // Assuming: neighbors[0]=East, [1]=West, [2]=South, [3]=North
 
-            Cell lookUpCell = null;
+        Coords[] maybeNeighborsCoords = setNeighbors(lookUpCell);
 
-            // determining its four neighbors' coordinates as they exist or not in the grid.
-            for (int j = 0; j < grid.getCellCount(); j++) {
-                lookUpCell = grid.getAllCells()[j];
+        if (maybeNeighborsCoords == null) {
 
-                // Let's find the neighbor located West
-                if (lookUpCell.getCoords().equals(maybeNeighbors[0])) {
-                    lookUpCell.neighbors[0] = maybeNeighbors[0];
-                } else
-                    lookUpCell.neighbors[0] = null;
+            lookUpCell.neighbors[0] = null;
+            lookUpCell.neighbors[1] = null;
+            lookUpCell.neighbors[2] = null;
+            lookUpCell.neighbors[3] = null;
 
-                // Let's find the neighbor located East
-                if (lookUpCell.getCoords().equals(maybeNeighbors[1])) {
-                    lookUpCell.neighbors[1] = maybeNeighbors[1];
-                } else
-                    lookUpCell.neighbors[1] = null;
+        } else {
 
-                // let's find the neighgbor located North
-                if (lookUpCell.getCoords().equals(maybeNeighbors[2])) {
-                    lookUpCell.neighbors[2] = maybeNeighbors[2];
-                } else
-                    lookUpCell.neighbors[2] = null;
+            for (int i = 0; i < maybeNeighborsCoords.length; i++) {
+                Coords maybeNeighbor = maybeNeighborsCoords[i];
 
-                // let's find the neighbor located North of the cell
-                if (lookUpCell.getCoords().equals(maybeNeighbors[3])) {
-                    lookUpCell.neighbors[3] = maybeNeighbors[3];
-                } else
-                    lookUpCell.neighbors[3] = null;
+                // Skip if no neighbor in this direction
+                if (maybeNeighbor != null)
 
+                    // Search for matching cell in grid
+                    for (Cell inGridCell : grid.getAllCells()) {
+                        if (maybeNeighbor.equals(inGridCell.getCoords())) {
+                            // Assign actual cell object
+                            lookUpCell.neighbors[i] = maybeNeighbor;
+
+                            // Found the neighbor for this direction
+                            break;
+                        }
+                    }
             }
+
         }
-        throw new IllegalArgumentException("Please enter a valid value.");
     }
 
     /**
@@ -244,6 +220,25 @@ public class Maze {
             e.printStackTrace();
         }
 
+    }
+
+    public boolean leadsToExit(Grid grid, Cell c) {
+
+        // mark the cell as explored
+        // get its neighbors [i]
+        // is the first neighbors explored?
+        // mark it as explored
+        // get its neighbors
+
+        return true;
+    }
+
+    public Cell[] solveMaze(Cell start) {
+        Cell[] Path = new Cell[grid.getCellCount()];
+
+        start = getStart(grid);
+        grid.leadsToExit(start);
+        return Path;
     }
 
 }
