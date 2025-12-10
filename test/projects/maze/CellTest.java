@@ -71,7 +71,7 @@ public class CellTest {
     @Test
     public void getTraversalFlagReturnsFalseByDefault() {
         cell = new Cell(new Coords(0, 0), CellStatus.S);
-        assertFalse(cell.getTraversalFlag());
+        assertFalse(cell.isExplored());
     }
 
     /**

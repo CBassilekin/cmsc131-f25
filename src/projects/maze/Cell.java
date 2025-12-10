@@ -55,8 +55,12 @@ public class Cell {
     }
 
     // this method returns the explored status of a cell
-    public boolean getTraversalFlag() {
+    public boolean isExplored() {
         return explored;
+    }
+
+    public boolean setExplored(){
+        return true;
     }
 
     // YB added this method to help return an array of all neighbors of a cell

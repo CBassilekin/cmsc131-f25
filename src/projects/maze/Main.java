@@ -8,8 +8,16 @@ public class Main {
         maze.serialize("data/sample_maze_out.txt");
     }
 
+    static void phase2() {
+        Maze maze = MazeReader.load( "data/sample_maze.txt" );
+         maze.DFS (new Cell (new Coords(0,1), CellStatus.S));
+         System.out.println("Traversal Successful!");
+    }
+
+
     public static void main(String[] args) {
         phase1();
+        phase2();
     }
 
 }
