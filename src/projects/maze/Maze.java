@@ -39,6 +39,13 @@ public class Maze {
         return size;
     }
 
+    public boolean insertCell(Cell cell) {
+        if (cell != null) {
+            return grid.insertCell(cell);
+        }
+        throw new IllegalArgumentException("Parameter cell cannot be null.");
+    }
+
     public Coords[] setNeighbors(Cell cell) {
         Coords[] maybeNeighbors = new Coords[4];
 

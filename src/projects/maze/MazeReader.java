@@ -31,8 +31,7 @@ public class MazeReader {
         try {
             scanner = new Scanner(new File(filename));
             Maze maze = new Maze(spaceCount);
-            Grid grid = new Grid(spaceCount);
-
+            
             int row = 0, col = 0;
             while (scanner.hasNextLine()) {
                 col = 0; // row begins with first column
@@ -43,7 +42,7 @@ public class MazeReader {
                         insertCell = new Cell(
                                 new Coords(row, col),
                                 CellStatus.valueOf(tokens[i]));
-                        grid.insertCell(insertCell);
+                        maze.insertCell(insertCell);
 
                     }
                     col++; // next space along same row
