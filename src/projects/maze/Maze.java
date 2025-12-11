@@ -227,7 +227,7 @@ public class Maze {
     }
 
     public boolean DFSMaze() {
-       Cell start = getStart(grid);
+       Cell start = getStart();
         
         return dfs(start);
     }
