@@ -2,8 +2,8 @@ package projects.maze;
 
 public class Grid {
 
-    private static int cellCount = 0;
-    private static Cell[] cells;
+    private int cellCount = 0;
+    private Cell[] cells;
 
     public Grid(int maxCells) {
         cells = new Cell[maxCells];
