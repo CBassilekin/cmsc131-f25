@@ -31,7 +31,7 @@ public class MazeReader {
         try {
             scanner = new Scanner(new File(filename));
             Maze maze = new Maze(spaceCount);
-            
+
             int row = 0, col = 0;
             while (scanner.hasNextLine()) {
                 col = 0; // row begins with first column
@@ -50,7 +50,7 @@ public class MazeReader {
                 row++; // new row
             }
             scanner.close();
-            maze.discoverNeighborsInGrid(insertCell);
+            maze.setUpNeighbors(insertCell);
             return maze;
         } catch (FileNotFoundException e) {
             e.printStackTrace();

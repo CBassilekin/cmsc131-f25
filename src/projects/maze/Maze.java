@@ -46,61 +46,53 @@ public class Maze {
         throw new IllegalArgumentException("Parameter cell cannot be null.");
     }
 
-    public Coords[] setNeighbors(Cell cell) {
-        Coords[] maybeNeighbors = new Coords[4];
-
-        if (grid.getCell(cell.getCoords()) == null) {
-            return null;
-        } else {
-
-            // determining its four neighbors' coordinates
-            // in this order EWSN.
-            maybeNeighbors[0] = new Coords(
-                    cell.getCoords().getRow(),
-                    cell.getCoords().getCol() + 1);
-            maybeNeighbors[1] = new Coords(cell.getCoords().getRow(),
-                    cell.getCoords().getCol() - 1);
-            maybeNeighbors[2] = new Coords(cell.getCoords().getRow() + 1,
-                    cell.getCoords().getCol());
-            maybeNeighbors[3] = new Coords(cell.getCoords().getRow() - 1,
-                    cell.getCoords().getCol());
-
-        }
-        return maybeNeighbors;
-    }
-
     /**
-     * method setup neighbors coordinates of a cell
-     * fill up the neighbors array for a given cell object
+     * method to setup neighbors for a given cell in the grid.
      * 
+     * @param cell - a given cell in the grid.
      */
+    public void setUpNeighbors(Cell cell) {
 
-    public void discoverNeighborsInGrid(Cell lookUpCell) {
+        if (cell == null) {
+            throw new IllegalArgumentException(
+                    "Parameter cell cannot be null");
+        } else {
+            int j = 0;
 
-        // Assuming: neighbors[0]=East, [1]=West, [2]=South, [3]=North
+            // the potential neighbors of a cell in the order
+            // East, West, South, North
+            Coords[] maybeNeighbors = new Coords[] { new Coords(
+                    cell.getCoords().getRow(),
+                    cell.getCoords().getCol() + 1),
+                    new Coords(cell.getCoords().getRow(),
+                            cell.getCoords().getCol() - 1),
+                    new Coords(cell.getCoords().getRow() + 1,
+                            cell.getCoords().getCol()),
+                    new Coords(cell.getCoords().getRow() - 1,
+                            cell.getCoords().getCol()) };
 
-        Coords[] maybeNeighborsCoords = setNeighbors(lookUpCell);
+            // building the final neighbors array
+            // by elimitattins null neighbors and those not in the grid
 
+            for (int i = 0; i < maybeNeighbors.length; i++) {
+                Coords maybeNeighbor = maybeNeighbors[i];
 
-            for (int i = 0; i < maybeNeighborsCoords.length; i++) {
-                Coords maybeNeighbor = maybeNeighborsCoords[i];
-             
-
+                if (maybeNeighbor != null) {
                     // Search for matching cell in grid
                     for (Cell inGridCell : grid.getAllCells()) {
                         if (maybeNeighbor.equals(inGridCell.getCoords())) {
                             // Assign actual cell object
-                            lookUpCell.neighbors[i] = maybeNeighbor;
+                            cell.neighbors[j] = maybeNeighbor;
+                            j++;
 
-                            // Found the neighbor for this direction
                             break;
                         }
                     }
-            
+                }
+            }
         }
-
     }
-    
+
     /**
      * method returns a cell' status in the grid.
      * 
@@ -112,10 +104,10 @@ public class Maze {
      *          - X; // cell absent
      * 
      * @return the cell status.
-    */
-   public Cell getFirstCellWithStatus(CellStatus s) {
-       if (s == null) {
-           throw new IllegalArgumentException("this parameter cannot be empty.");
+     */
+    public Cell getFirstCellWithStatus(CellStatus s) {
+        if (s == null) {
+            throw new IllegalArgumentException("this parameter cannot be empty.");
         } else {
             for (int i = 0; i < grid.getCellCount(); i++) {
                 Cell lookUpCell = grid.getAllCells()[i];
@@ -126,7 +118,7 @@ public class Maze {
         }
         return null;
     }
-    
+
     /**
      * method returns Entrance of the maze.
      * 
@@ -203,41 +195,56 @@ public class Maze {
 
     }
 
-    public boolean dfs(Cell c) {
+    private boolean dfs(Cell c) {
 
-        // mark the cell as explored
-        c.setExplored();
+        // base case: mark the cell as explored
+        c.setExplored(true);
 
-        // get its neighbors [i]
-        Coords [] neighborCoords = c.getNeighbors();
+        // we found the exit,
+        if (c.getStatus() == CellStatus.E) {
+            return true;
+        }
+        // mark the cell as part of the path tentatively
+        if (c.getStatus() != CellStatus.S) {
+            c.setStatus(CellStatus.P);
+            return true;
+        }
 
-        /* Print out all the neighbors of this cell to the screen
-        System.out.println ("East: " + (neighbors[0].getRow()+ "," +  neighbors[0].getCol()) + ","+
-        "West:" + (neighbors[1].getRow()+ "," +  neighbors[1].getCol()) + " South: "+ (neighbors[2].getRow() + ","+ neighbors[2].getCol()) +","+ 
-        "North: " + (neighbors[2].getRow() + ","+ neighbors[2].getCol()) );*/
-        
-        // repeat DFS on the neighbors
-        for (int i = 0; i < neighborCoords.length; i ++){
+        // recursive call dfs on cell' neighbors
+        setUpNeighbors(c);
+        Coords[] neighborCoords = c.getNeighbors();
 
-            // let us start traversing the neighbors
+        // let us start traversing the neighbors
+        for (int i = 0; i < neighborCoords.length; i++) {
             Cell lookUpCell = grid.getCell(neighborCoords[i]);
 
+            // ignore null neighbors if any (getCell() may return null)
             if (lookUpCell == null) {
                 continue;
-            }
 
-            //if the neighbor is not explored
-            if(!lookUpCell.isExplored()){
-            dfs (lookUpCell);            
-            } 
-        } return true;
+            } // if the neighbor is unexplored, we dfs into it
+            if (lookUpCell.isExplored()) {
+                continue;
+            }
+            if (dfs(lookUpCell)) {
+                return true;
+
+            }
+        }
+        // Backtracking step: unmark cell as part of path
+        if (c.getStatus() != CellStatus.S && c.getStatus() != CellStatus.E) {
+            // change cell status back to O due to dead end;
+            c.setStatus(CellStatus.O);
+
+        }
+        return false;
+
     }
 
-    public boolean DFSMaze() {
-       Cell start = getStart();
-        
+    public boolean solveMaze() {
+        Cell start = getStart();
+
         return dfs(start);
     }
 
-//for testing check test maze for status 'explored' and new CellStatus 'O --->P'
 }

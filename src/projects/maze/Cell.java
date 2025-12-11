@@ -27,7 +27,7 @@ public class Cell {
 
     // YB added the cell' extra attributes: 'status', 'explored', neighborsCount'
     // and 'neighbors'
-    private final CellStatus status;
+    private CellStatus status;
     private boolean explored = false;
     public Coords[] neighbors = new Coords[4];
 
@@ -54,13 +54,22 @@ public class Cell {
 
     }
 
-    // this method returns the explored status of a cell
+    // this method returns that a cell has not been explored
+    // by default
     public boolean isExplored() {
         return explored;
     }
 
-    public boolean setExplored(){
-        return true;
+    // this method set the cell as explored when called
+    public void setExplored(boolean updateExplored) {
+        explored = updateExplored;
+    }
+
+    // this method sets the cell status when called
+    // from "O" to "P" when part of the solution path
+    // or from "P" to "O" when backtracking
+    public void setStatus(CellStatus updateStatus) {
+        status = updateStatus;
     }
 
     // YB added this method to help return an array of all neighbors of a cell

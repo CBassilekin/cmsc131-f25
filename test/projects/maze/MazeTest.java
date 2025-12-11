@@ -34,6 +34,11 @@ public class MazeTest {
         testGrid.insertCell(cells[2]);
         testGrid.insertCell(cells[3]);
 
+        maze.insertCell(cells[0]);
+        maze.insertCell(cells[1]);
+        maze.insertCell(cells[2]);
+        maze.insertCell(cells[3]);
+
     }
 
     /**
@@ -58,25 +63,26 @@ public class MazeTest {
      * Coords [3] - is the cell locatd South
      */
     @Test
-    public void testDiscoverNeighborsInGridReturnsCorrectArrayForStartCell() {
+    public void testSetUpNeighborReturnsCorrectArrayForStartCell() {
         Cell startCell = new Cell(new Coords(0, 2), CellStatus.S);
         testGrid.insertCell(startCell);
-        maze.discoverNeighborsInGrid(maze.getStart(testGrid));
+        maze.insertCell(startCell);
+        maze.setUpNeighbors(maze.getStart());
 
         // Discovering actual Coords (0,0) neighbors
         // this test also serves for the Cell.getNeighbors () method.
-        Coords[] actualNeighbors = (maze.getStart(testGrid)).getNeighbors();
+        Coords[] actualNeighbors = (maze.getStart()).getNeighbors();
 
         // Estimating the expected result.
-        Coords[] expectedNeighbors = new Coords[] { null, new Coords(0, 1), null, null };
+        Coords[] expectedNeighbors = new Coords[] { new Coords(0, 1), null, null, null };
 
         // expected vs actual should match, some neighbors are null.
 
-        assertNull(expectedNeighbors[0]);
-        assertNull(actualNeighbors[0]);
+        assertNotNull(actualNeighbors[0]);
+        assertTrue(expectedNeighbors[0].equals(actualNeighbors[0]));
 
-        assertTrue(expectedNeighbors[1].equals(actualNeighbors[1]));
-        assertNotNull(actualNeighbors[1]);
+        assertNull(expectedNeighbors[1]);
+        assertNull(actualNeighbors[1]);
 
         assertNull(expectedNeighbors[2]);
         assertNull(actualNeighbors[2]);
@@ -91,12 +97,12 @@ public class MazeTest {
      * inserted.
      */
     @Test
-    public void testDiscoverandSetUpNeighborsReturnsEmptyArray() {
+    public void testSetUpNeighborReturnsEmptyArray() {
         // defining the lookUpCell, not present in the maze.
         Cell cell1 = new Cell(new Coords(1, 5), CellStatus.O);
 
         // Discovering Cell1 actual neighbors
-        maze.discoverNeighborsInGrid(cell1);
+        maze.setUpNeighbors(cell1);
 
         // getting the actual result
         Coords[] actualNeighbors = cell1.getNeighbors();
@@ -121,9 +127,10 @@ public class MazeTest {
     @Test
     public void testgetStartReturnsCorrectCell() {
         testGrid.insertCell(new Cell(new Coords(2, 0), CellStatus.S));
+        maze.insertCell(new Cell(new Coords(2, 0), CellStatus.S));
 
         Cell expectedStart = new Cell(new Coords(2, 0), CellStatus.S);
-        Cell actualStart = maze.getStart(testGrid);
+        Cell actualStart = maze.getStart();
         assertTrue(expectedStart.getCoords().equals(actualStart.getCoords()));
         assertEquals(expectedStart.getStatus(), actualStart.getStatus());
         assertNotNull(actualStart);
@@ -135,7 +142,7 @@ public class MazeTest {
     @Test
     public void testgetStartReturnsNull() {
 
-        assertNull(maze.getStart(testGrid));
+        assertNull(maze.getStart());
 
     }
 
@@ -162,6 +169,7 @@ public class MazeTest {
     @Test
     public void testFirstCellWithStatusReturnsCorrectCellWithStatusStart() {
         testGrid.insertCell(new Cell(new Coords(2, 0), CellStatus.S));
+        maze.insertCell(new Cell(new Coords(2, 0), CellStatus.S));
 
         Cell expectedCellwithStatutStart = new Cell(new Coords(2, 0), CellStatus.S);
         Cell actualFirstCellWithStatusStart = maze.getFirstCellWithStatus(CellStatus.S);
@@ -180,6 +188,7 @@ public class MazeTest {
 
         Cell expectedCellwithStatutExit = new Cell(new Coords(3, 4), CellStatus.E);
         testGrid.insertCell(expectedCellwithStatutExit);
+        maze.insertCell(expectedCellwithStatutExit);
 
         Cell actualFirstCellWithStatusExit = maze.getFirstCellWithStatus(CellStatus.E);
         assertNotNull(actualFirstCellWithStatusExit);
@@ -227,7 +236,8 @@ public class MazeTest {
     @Test
     public void testgetEndReturnsCorrectEndCell() {
         testGrid.insertCell(new Cell(new Coords(4, 0), CellStatus.E));
-        Cell actualEnd = maze.getEnd(testGrid);
+        maze.insertCell(new Cell(new Coords(4, 0), CellStatus.E));
+        Cell actualEnd = maze.getEnd();
         assertNotNull(actualEnd);
         assertTrue(new Coords(4, 0).equals(actualEnd.getCoords()));
         assertEquals(CellStatus.E, actualEnd.getStatus());
@@ -236,37 +246,21 @@ public class MazeTest {
 
     /**
      * method will throw an exception of a null grid is passed.
+     * 
+     * @Test
+     *       public void testgetEndThrowsonNullInput() {
+     * 
+     *       Exception exception = assertThrows(
+     *       IllegalArgumentException.class,
+     *       () -> {
+     *       maze.getEnd();
+     *       });
+     *       assertEquals(
+     *       "grid cannot be empty.",
+     *       exception.getMessage());
+     * 
+     *       }
      */
-    @Test
-    public void testgetEndThrowsonNullInput() {
-
-        Exception exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    maze.getEnd(null);
-                });
-        assertEquals(
-                "grid cannot be empty.",
-                exception.getMessage());
-
-    }
-
-    /**
-     * method will throw an exception of a null grid is passed.
-     */
-    @Test
-    public void testgetEndReturnsNull() {
-
-        Exception exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    maze.getEnd(null);
-                });
-        assertEquals(
-                "grid cannot be empty.",
-                exception.getMessage());
-
-    }
 
     /**
      * method checks that a copy of the array to a file is successful.
@@ -317,5 +311,32 @@ public class MazeTest {
                 });
         assertEquals("Filename cannot be null.", e.getMessage());
     }
+
+    @Test
+    public void testSolveMaze() {
+        // setting up a simple maze
+        Maze simpleMaze = new Maze(5);
+        Grid simpleGrid = new Grid(5);
+        simpleGrid.insertCell(new Cell(new Coords(0, 0), CellStatus.S));
+        simpleGrid.insertCell(new Cell(new Coords(0, 1), CellStatus.O));
+        simpleGrid.insertCell(new Cell(new Coords(0, 2), CellStatus.O));
+        simpleGrid.insertCell(new Cell(new Coords(1, 2), CellStatus.O));
+        simpleGrid.insertCell(new Cell(new Coords(2, 2), CellStatus.E));
+
+        simpleMaze.insertCell(new Cell(new Coords(0, 0), CellStatus.S));
+        simpleMaze.insertCell(new Cell(new Coords(0, 1), CellStatus.O));
+        simpleMaze.insertCell(new Cell(new Coords(0, 2), CellStatus.O));
+        simpleMaze.insertCell(new Cell(new Coords(1, 2), CellStatus.O));
+        simpleMaze.insertCell(new Cell(new Coords(2, 2), CellStatus.E));
+
+        // attempt to solve the maze
+        boolean solved = simpleMaze.solveMaze();
+
+        // verify that the maze was solved
+        assertTrue(solved);
+    }
+
+    // YB asks: With the solveMaze() assuming DFS() starting from Start
+    // is it possible to test for unsolvable mazes (where DFS returns false)?
 
 }

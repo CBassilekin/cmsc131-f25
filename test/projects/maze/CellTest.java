@@ -94,20 +94,25 @@ public class CellTest {
         testGrid.insertCell(cells[2]);
         testGrid.insertCell(cells[3]);
 
+        maze.insertCell(cells[0]);
+        maze.insertCell(cells[1]);
+        maze.insertCell(cells[2]);
+        maze.insertCell(cells[3]);
+
         // Finding the expected neighbors of cell (new Coorrds (0,0), CellStatus.O)
-        Coords[] expectedNeighbors = new Coords[] { new Coords(0, 1), null, new Coords(1, 0), null };
+        Coords[] expectedNeighbors = new Coords[] { new Coords(0, 1), new Coords(1, 0), null, null };
 
         // Finding the actual neighbors from the getNeighbors() method
         Cell lookUpCell = (testGrid.getAllCells()[0]);
-        maze.discoverNeighborsInGrid(lookUpCell);
+        maze.setUpNeighbors(lookUpCell);
         Coords[] actualNeighbors = (lookUpCell.getNeighbors());
 
         assertNotNull(expectedNeighbors);
         assertNotNull(actualNeighbors);
         assertTrue(expectedNeighbors[0].equals(actualNeighbors[0]));
-        assertTrue(expectedNeighbors[2].equals(actualNeighbors[2]));
+        assertTrue(expectedNeighbors[1].equals(actualNeighbors[1]));
 
-        assertNull(actualNeighbors[1]);
+        assertNull(actualNeighbors[2]);
         assertNull(actualNeighbors[3]);
 
     }
@@ -134,7 +139,7 @@ public class CellTest {
         testGrid.insertCell(cells[2]);
         testGrid.insertCell(cells[3]);
 
-        maze.discoverNeighborsInGrid(new Cell(new Coords(0, 5), CellStatus.O));
+        maze.setUpNeighbors(new Cell(new Coords(0, 5), CellStatus.O));
 
         assertNull((new Cell(new Coords(0, 5), CellStatus.O).getNeighbors()[0]));
         assertNull((new Cell(new Coords(0, 5), CellStatus.O).getNeighbors()[1]));
