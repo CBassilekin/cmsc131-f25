@@ -94,25 +94,6 @@ public class Maze {
 
     }
     
-
-    /**
-     * method returns Entrance of the maze.
-     * 
-     * @param grid - an array of cells.
-     * 
-     * @return cell object with `Start` Status or null.
-     */
-    public Cell getStart(Grid grid) {
-        for (int i = 0; i < grid.getCellCount(); i++) {
-            Cell startCell = grid.getAllCells()[i];
-            if (startCell.getStatus() == CellStatus.S) {
-                return startCell;
-
-            }
-        }
-        return null;
-    }
-
     /**
      * method returns a cell' status in the grid.
      * 
@@ -124,10 +105,10 @@ public class Maze {
      *          - X; // cell absent
      * 
      * @return the cell status.
-     */
-    public Cell getFirstCellWithStatus(CellStatus s) {
-        if (s == null) {
-            throw new IllegalArgumentException("this parameter cannot be empty.");
+    */
+   public Cell getFirstCellWithStatus(CellStatus s) {
+       if (s == null) {
+           throw new IllegalArgumentException("this parameter cannot be empty.");
         } else {
             for (int i = 0; i < grid.getCellCount(); i++) {
                 Cell lookUpCell = grid.getAllCells()[i];
@@ -138,6 +119,17 @@ public class Maze {
         }
         return null;
     }
+    
+    /**
+     * method returns Entrance of the maze.
+     * 
+     * @param grid - an array of cells.
+     * 
+     * @return cell object with `Start` Status or null.
+     */
+    public Cell getStart() {
+        return getFirstCellWithStatus(CellStatus.S);
+    }
 
     /**
      * method find the exit of the grid.
@@ -146,17 +138,8 @@ public class Maze {
      * 
      * @return the exit cell or null.
      */
-    public Cell getEnd(Grid grid) {
-        if (grid == null) {
-            throw new IllegalArgumentException("grid cannot be empty.");
-        } else {
-
-            Cell endCell = getFirstCellWithStatus(CellStatus.E);
-            if (endCell != null) {
-                return endCell;
-            }
-        }
-        return null;
+    public Cell getEnd() {
+        return getFirstCellWithStatus(CellStatus.E);
     }
 
     /**
@@ -213,13 +196,13 @@ public class Maze {
 
     }
 
-    public boolean DFS(Cell c) {
+    public boolean dfs(Cell c) {
 
         // mark the cell as explored
         c.setExplored();
 
         // get its neighbors [i]
-        Coords [] neighbors = c.getNeighbors();
+        Coords [] neighborCoords = c.getNeighbors();
 
         /* Print out all the neighbors of this cell to the screen
         System.out.println ("East: " + (neighbors[0].getRow()+ "," +  neighbors[0].getCol()) + ","+
@@ -227,18 +210,18 @@ public class Maze {
         "North: " + (neighbors[2].getRow() + ","+ neighbors[2].getCol()) );*/
         
         // repeat DFS on the neighbors
-        for (int i = 0; i < neighbors.length; i ++){
+        for (int i = 0; i < neighborCoords.length; i ++){
 
             // let us start traversing the neighbors
-            Cell lookUpCoords = grid.getCell (neighbors [i]);
+            Cell lookUpCell = grid.getCell(neighborCoords[i]);
 
-            if (lookUpCoords == null) {
+            if (lookUpCell == null) {
                 continue;
             }
 
             //if the neighbor is not explored
-            if(!lookUpCoords.isExplored()){
-            DFS (lookUpCoords);            
+            if(!lookUpCell.isExplored()){
+            dfs (lookUpCell);            
             } 
         } return true;
     }
@@ -246,7 +229,7 @@ public class Maze {
     public boolean DFSMaze() {
        Cell start = getStart(grid);
         
-        return DFS(start);
+        return dfs(start);
     }
 
 //for testing check test maze for status 'explored' and new CellStatus 'O --->P'

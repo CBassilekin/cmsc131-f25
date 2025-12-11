@@ -10,8 +10,8 @@ public class Main {
 
     static void phase2() {
         Maze maze = MazeReader.load( "data/sample_maze.txt" );
-         maze.DFS (new Cell (new Coords(0,1), CellStatus.S));
-         System.out.println("Traversal Successful!");
+        maze.dfs(maze.getStart());
+        System.out.println("Traversal Successful!");
     }
 
 
