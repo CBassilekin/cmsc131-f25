@@ -336,7 +336,38 @@ public class MazeTest {
         assertTrue(solved);
     }
 
-    // YB asks: With the solveMaze() assuming DFS() starting from Start
-    // is it possible to test for unsolvable mazes (where DFS returns false)?
+    // (Dusel) suggested test cases for maze solving
+
+    @Test
+    void testSolveTrivial() {
+        Maze exitOnly = new Maze(2); // S E
+        exitOnly.insertCell(new Cell(new Coords(0, 0), CellStatus.S));
+        exitOnly.insertCell(new Cell(new Coords(0, 1), CellStatus.E));
+        // set up neighbors, then verify that exitOnly has a solution
+
+        Maze noExit = new Maze(2); // S O
+        noExit.insertCell(new Cell(new Coords(0, 0), CellStatus.S));
+        noExit.insertCell(new Cell(new Coords(0, 1), CellStatus.O));
+        // set up neighbors, then verify that noExit has no solution
+    }
+
+    @Test
+    void testSolveTestMaze() {
+        /* load  test_maze.csv into testMaze object, then verify that testMaze 
+           has a solution */
+
+        // now compare cell statuses
+        Cell[] allCells = testMaze.getAllCells();
+        CellStatus[] expectedStatuses = {
+            CellStatus.S,
+            CellStatus.P, CellStatus.P, CellStatus.E,
+            CellStatus.O
+        };
+        for (int idx = 0; idx < allCells.length; idx++) {
+            Cell actualCell = allCells[idx];
+            /* compare actual status/explored values 
+               to expected status/explored values */
+        }        
+    }
 
 }
