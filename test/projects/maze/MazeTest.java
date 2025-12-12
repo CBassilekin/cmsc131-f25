@@ -489,7 +489,7 @@ public class MazeTest {
      * complex maze stored in test_maze.csv file.
      */
     @Test
-    void testSolveTestMaze() {
+    void testSolveTestMazeIsTrue() {
         /*
          * load test_maze.csv into testMaze object, then verify that testMaze
          * has a solution
@@ -497,7 +497,7 @@ public class MazeTest {
 
         Maze testMaze = new Maze(5);
         testMaze = MazeReader.load("data/test_maze.csv");
-        testMaze.solveMaze();
+        assertTrue(testMaze.solveMaze());
         Cell[] allCells = testMaze.getAllCells();
 
         // confirm that allCells is not null and has expected length
@@ -533,6 +533,53 @@ public class MazeTest {
                         CellStatus.P,
                         actualCell.getStatus());
             }
+
+        }
+    }
+
+    /*
+     * method tests that the maze solving method is working correctly on a more
+     * complex maze stored in test_maze.csv file.
+     */
+    @Test
+    void testSolveTestMazeIsFalse() {
+        /*
+         * load unsolvable_test_maze.csv" into testMaze object, then verify that
+         * testMaze
+         * has a no solution
+         */
+
+        Maze testMaze = new Maze(4);
+        testMaze = MazeReader.load("data/unsolvable_test_maze.csv");
+
+        // No solution should be found
+        assertFalse(testMaze.solveMaze());
+        Cell[] allCells = testMaze.getAllCells();
+
+        // confirm that allCells is not null and has expected length
+        assertNotNull(allCells);
+        // confirm expected length is 4
+        assertEquals(4, allCells.length);
+
+        // now compare cell statuses
+        CellStatus[] expectedStatuses = {
+                CellStatus.S,
+                CellStatus.O, CellStatus.E,
+                CellStatus.O
+        };
+
+        for (int idx = 0; idx < allCells.length; idx++) {
+            Cell actualCell = allCells[idx];
+            assertNotNull(actualCell);
+            /*
+             * compare actual status/explored values
+             * to expected status/explored values
+             */
+
+            // expected vs actual should match for all cells since no solution found
+            assertEquals(
+                    expectedStatuses[idx],
+                    actualCell.getStatus());
 
         }
     }
