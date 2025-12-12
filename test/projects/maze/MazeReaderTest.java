@@ -35,8 +35,26 @@ public class MazeReaderTest {
         assertEquals("file cannot be null, start over.", e.getMessage());
     }
 
+    /**
+     * new!
+     * this test checks that the load() returns no maze
+     * when an empty file is passed.
+     */
+    @Test
+    public void testLoadReturnsNoMazeOnEmptyFile() {
+
+        Maze actualMaze = MazeReader.load("data/empty_maze.txt");
+        assertNull(actualMaze);
+
+    }
+
+    /**
+     * this test checks that the countSpacesIn() method works successfully when a
+     * valid file is passed.
+     */
     @Test
     public void testcountSpacesIn() {
+        // file is valid and has 4 spaces
         int expectedSpaceCount = 4;
         int actualSpaceCount = MazeReader.countSpacesIn("data/sample_maze_test2.txt");
         assertEquals(expectedSpaceCount, actualSpaceCount);
@@ -55,5 +73,19 @@ public class MazeReaderTest {
                     MazeReader.countSpacesIn(null);
                 });
         assertEquals("file cannot be null, start over.", e.getMessage());
+    }
+
+    /**
+     * new!
+     * this test checks that the countSpacesIn() method returns zero when an empty
+     * file is passed.
+     * 
+     */
+    @Test
+    public void testcountSpacesInReturnsZeroOnEmptyFile() {
+        // file is empty and has 0 spaces
+        int expectedSpaceCount = 0;
+        int actualSpaceCount = MazeReader.countSpacesIn("data/empty_maze.txt");
+        assertEquals(expectedSpaceCount, actualSpaceCount);
     }
 }

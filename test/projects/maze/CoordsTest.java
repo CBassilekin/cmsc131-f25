@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CoordsTest {
-    private Coords test;
+    private Coords testCoords;
 
     /**
      * test method for constructor
@@ -19,76 +19,76 @@ public class CoordsTest {
     }
 
     /**
-     * test method to verfies correct row is returned
+     * test method to verify that correct row is returned
      */
     @Test
     public void getRowReturnsCorrectRow() {
-        test = new Coords(5, 0);
+        testCoords = new Coords(5, 0);
         double expectedRow = (double) 5;
-        double actualRow = (double) test.getRow();
+        double actualRow = (double) testCoords.getRow();
 
         assertEquals(expectedRow, actualRow);
     }
 
     /**
-     * test method to verfies correct col is returned
+     * test method to verify that correct col is returned
      */
     @Test
     public void getColReturnsCorrectCol() {
-        test = new Coords(0, 0);
+        testCoords = new Coords(0, 0);
         double expectedCol = (double) 0;
-        double actualCol = (double) test.getCol();
+        double actualCol = (double) testCoords.getCol();
 
         assertEquals(expectedCol, actualCol);
     }
 
     @Test
     public void testEqualsIdenticalObjectsReturnTrue() {
-        test = new Coords(0, 0);
+        testCoords = new Coords(0, 0);
         Coords test2 = new Coords(0, 0);
-        assertTrue(test.equals(test2));
+        assertTrue(testCoords.equals(test2));
 
     }
 
     @Test
     public void testEqualssameObject() {
-        test = new Coords(0, 0);
-        assertTrue(test.equals(test));
+        testCoords = new Coords(0, 0);
+        assertTrue(testCoords.equals(testCoords));
 
     }
 
     @Test
     public void testEqualsDifferentObjects() {
-        test = new Coords(0, 0);
+        testCoords = new Coords(0, 0);
         Coords test2 = new Coords(1, 0);
-        assertFalse(test.equals(test2));
+        assertFalse(testCoords.equals(test2));
     }
 
     @Test
     public void testEqualsDifferentRow() {
-        test = new Coords(1, 0);
+        testCoords = new Coords(1, 0);
         Coords test2 = new Coords(2, 0);
-        assertFalse(test.equals(test2));
+        assertFalse(testCoords.equals(test2));
 
     }
 
     @Test
     public void testEqualsDifferentCol() {
-        test = new Coords(1, 0);
+        testCoords = new Coords(1, 0);
         Coords test2 = new Coords(1, 1);
-        assertFalse(test.equals(test2));
+        assertFalse(testCoords.equals(test2));
     }
 
     @Test
     public void testEqualsDifferentRowandCol() {
-        test = new Coords(1, 0);
+        testCoords = new Coords(1, 0);
         Coords test2 = new Coords(2, 1);
-        assertFalse(test.equals(test2));
+        assertFalse(testCoords.equals(test2));
     }
 
     @Test
     public void testEqualsnull() {
-        test = new Coords(1, 0);
-        assertFalse(test.equals(null));
+        testCoords = new Coords(1, 0);
+        assertFalse(testCoords.equals(null));
     }
 }

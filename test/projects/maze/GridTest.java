@@ -6,19 +6,30 @@ import org.junit.jupiter.api.Test;
 public class GridTest {
 
     /**
+     * new!
+     * Test method verifies that a grid is successfully initialized
+     * with zero cells.
+     */
+    @Test
+    public void testGridInitialization() {
+        Grid grid = new Grid(5);
+        assertNotNull(grid);
+        assertEquals(0, grid.getCellCount());
+    }
+
+    /**
      * Test method verifies that a cell is successfully inserted
      * in the grid and can be retrieved from it.
      */
     @Test
     public void testInsertAndRetrieveFirstCell() {
-        Cell[] cells = new Cell[] {
-                new Cell(new Coords(0, 0), CellStatus.E),
-                new Cell(new Coords(1, 1), CellStatus.S)
-        };
+
         Grid grid = new Grid(2);
-        grid.insertCell(cells[0]);
-        grid.insertCell(cells[1]);
-        Cell retrieved = grid.getCell(cells[0].getCoords());
+        grid.insertCell(new Cell(new Coords(0, 0), CellStatus.E));
+        grid.insertCell(new Cell(new Coords(1, 1), CellStatus.S));
+
+        // is cell with Coords (0,0) retrievable?
+        Cell retrieved = grid.getCell(new Coords(0, 0));
         assertNotNull(retrieved);
     }
 
@@ -36,26 +47,9 @@ public class GridTest {
         Grid grid = new Grid(2);
         grid.insertCell(cells[0]);
         grid.insertCell(cells[1]);
+
+        // Also verifies getCellCount()
         assertEquals(2, grid.getCellCount());
-    }
-
-    /**
-     * Test method confirm that "GetAllCells" returned the correct
-     * number of cells inserted.
-     * verifying also that each cell in the grid is non-null.
-     */
-    @Test
-    public void testGetAllCellsReturnsCorrectCount() {
-        Cell[] cells = new Cell[] {
-                new Cell(new Coords(0, 0), CellStatus.E),
-                new Cell(new Coords(1, 1), CellStatus.S)
-        };
-        Grid grid = new Grid(2);
-        grid.insertCell(cells[0]);
-        grid.insertCell(cells[1]);
-        cells = grid.getAllCells();
-        assertEquals(2, cells.length);
-
     }
 
     /**
@@ -66,7 +60,7 @@ public class GridTest {
      * 
      */
     @Test
-    public void testInsertAtCapacityBoundary() {
+    public void testInsertAtCapacityBoundaryReturnsFalse() {
         Cell[] cells = new Cell[] {
                 new Cell(new Coords(0, 0), CellStatus.E),
                 new Cell(new Coords(1, 1), CellStatus.S)
@@ -115,7 +109,28 @@ public class GridTest {
         Grid grid = new Grid(2);
         grid.insertCell(cells[0]);
         grid.insertCell(cells[1]);
+
+        // trying to get a cell that does not exist
         assertNull(grid.getCell(new Coords(2, 1)));
+
+    }
+
+    /**
+     * Test method confirm that "GetAllCells" returned the correct
+     * number of cells inserted.
+     * verifying also that each cell in the grid is non-null.
+     */
+    @Test
+    public void testGetAllCellsReturnsCorrectArraySize() {
+        Cell[] cells = new Cell[] {
+                new Cell(new Coords(0, 0), CellStatus.E),
+                new Cell(new Coords(1, 1), CellStatus.S)
+        };
+        Grid grid = new Grid(2);
+        grid.insertCell(cells[0]);
+        grid.insertCell(cells[1]);
+        cells = grid.getAllCells();
+        assertEquals(2, cells.length);
 
     }
 
@@ -139,6 +154,18 @@ public class GridTest {
         assertEquals(expectedCells[0].getStatus(), CellStatus.E);
         assertEquals(expectedCells[1].getStatus(), CellStatus.S);
 
+    }
+
+    /**
+     * new!
+     * test method verifies that getAllCells() return
+     * null cells when the grid is empty.
+     */
+    @Test
+    public void getAllCellsOnEmptyGridReturnsEmptyArray() {
+        Grid grid = new Grid(5);
+        Cell[] cells = grid.getAllCells();
+        assertEquals(0, cells.length);
     }
 
 }

@@ -24,7 +24,11 @@ public class Coords {
      * c - is any given column number couting Eastward on the grid;
      */
     public Coords(int r, int c) {
-
+        // assign given row and col to attributes
+        // YB removed validation to allow negative coords
+        // for setUpNeighbors().
+        // it is also assumed that the maze file will
+        // always provide positive values.
         row = r;
         col = c;
     }

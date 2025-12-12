@@ -195,50 +195,73 @@ public class Maze {
 
     }
 
-    private boolean dfs(Cell c) {
+    public Cell[] getAllCells() {
+        return grid.getAllCells();
+    }
 
-        // base case: mark the cell as explored
+    // newly added method
+    public Cell getCell(Coords coords) {
+        return grid.getCell(coords);
+    }
+
+    // newly added method
+    public int getCellCount() {
+        return grid.getCellCount();
+    }
+
+    private boolean dfs(Cell c) {
+        // 1. Base case: Mark the current cell as explored immediately upon visiting.
         c.setExplored(true);
 
-        // we found the exit,
+        // 2. We found the exit. Return true immediately.
         if (c.getStatus() == CellStatus.E) {
             return true;
         }
-        // mark the cell as part of the path tentatively
+
+        // 3. Mark the current cell as part of the path tentatively (unless it's the
+        // start,
+        // which should remain 'S' but can be treated as 'P' conceptually for path
+        // tracing if desired).
+        // The original code returned 'true' here if it wasn't the start, which
+        // prematurely ended the search.
         if (c.getStatus() != CellStatus.S) {
             c.setStatus(CellStatus.P);
-            return true;
         }
 
-        // recursive call dfs on cell' neighbors
+        // 4. Recursive calls: Traverse neighbors.
+        // Assuming setUpNeighbors() populates c.getNeighbors() correctly.
         setUpNeighbors(c);
         Coords[] neighborCoords = c.getNeighbors();
 
-        // let us start traversing the neighbors
         for (int i = 0; i < neighborCoords.length; i++) {
-            Cell lookUpCell = grid.getCell(neighborCoords[i]);
+            Cell neighborCell = grid.getCell(neighborCoords[i]);
 
-            // ignore null neighbors if any (getCell() may return null)
-            if (lookUpCell == null) {
-                continue;
-
-            } // if the neighbor is unexplored, we dfs into it
-            if (lookUpCell.isExplored()) {
+            // Ignore null neighbors or neighbors already visited (explored).
+            if (neighborCell == null || neighborCell.isExplored()) {
                 continue;
             }
-            if (dfs(lookUpCell)) {
+
+            // Recursively call dfs on the neighbor.
+            // If the recursive call returns 'true', it means a path to the exit was found
+            // through this neighbor.
+            if (dfs(neighborCell)) {
+                // If the exit is found down this path, immediately propagate 'true' all the way
+                // back up the call stack.
                 return true;
-
             }
         }
-        // Backtracking step: unmark cell as part of path
+
+        // 5. Backtracking step: If all neighbors were explored and none led to the
+        // exit,
+        // this cell is a dead end for the solution path.
+        // We change its status back to 'O' (Open/Not part of path) and return 'false'.
+        // We must ensure we don't change 'S' or 'E' statuses here.
         if (c.getStatus() != CellStatus.S && c.getStatus() != CellStatus.E) {
-            // change cell status back to O due to dead end;
             c.setStatus(CellStatus.O);
-
         }
-        return false;
 
+        // Return false because this branch did not find the exit.
+        return false;
     }
 
     public boolean solveMaze() {

@@ -60,11 +60,13 @@ public class Cell {
         return explored;
     }
 
+    // new!!
     // this method set the cell as explored when called
     public void setExplored(boolean updateExplored) {
         explored = updateExplored;
     }
 
+    // new!!
     // this method sets the cell status when called
     // from "O" to "P" when part of the solution path
     // or from "P" to "O" when backtracking
@@ -74,8 +76,20 @@ public class Cell {
 
     // YB added this method to help return an array of all neighbors of a cell
     public Coords[] getNeighbors() {
-        // this method is called in the Maze class.
+        // this method is built up in the Maze class.
         return neighbors;
+    }
+
+    // new!
+    // YB added this method to help return the count of neighbors of a cell
+    public int getNeighborsCount() {
+        int count = 0;
+        for (Coords neighbor : neighbors) {
+            if (neighbor != null) {
+                count++;
+            }
+        }
+        return count;
     }
 
 }
