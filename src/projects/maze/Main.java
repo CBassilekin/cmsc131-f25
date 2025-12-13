@@ -14,10 +14,21 @@ public class Main {
         System.out.println("Maze Solved!");
     }
 
+    static void hardMazes() {
+        Maze maze = MazeReader.load("data/hard_maze.txt");
+        if (maze.solveMaze()) {
+            maze.serialize("data/hard_maze.out");
+        }
+        maze = MazeReader.load("data/hard_maze_nosol.txt");
+        if (maze.solveMaze()) {
+            maze.serialize("data/hard_maze_nosol.out");
+        }
+    }
+
     public static void main(String[] args) {
         phase1();
         phase2();
-
+        hardMazes();
     }
 
 }
