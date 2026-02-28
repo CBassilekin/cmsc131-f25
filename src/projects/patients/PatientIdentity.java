@@ -1,6 +1,6 @@
 package projects.patients;
 
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PatientIdentity {
@@ -20,7 +20,7 @@ public class PatientIdentity {
      * 
      */
 
-    public PatientIdentity(Name patientName, LocalDate patientDob) {
+    public PatientIdentity(Name patientName, Date patientDob) {
         if (patientName == null) {
             throw new IllegalArgumentException("Patient's name cannot be null.");
         } else if (patientDob == null) {
@@ -29,7 +29,6 @@ public class PatientIdentity {
         }
         name = patientName;
         dob = patientDob;
-
     }
 
     /**
@@ -44,23 +43,24 @@ public class PatientIdentity {
     }
 
     /**
-     * Date of birth of the patient in format YYYY-MM-DD.
-     * 
-     * @return the LocalDate object representing the patient's date of birth.
-     */
-    public String getFormattedDobString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return dob.format(formatter);
-    }
-
-    /**
      * Getter method for the date of birth of the patient.
      * 
      * @return the Date object representing the patient's date of birth.
      */
     public Date getDob() {
-        dob = Date.getFormattedDobString();
         return dob;
+    }
+
+    /**
+     * method formats the date of birth (dob)
+     * all dob should match this format yyyy-MM-dd
+     * 
+     * @return String dobOutput - formatted dob of the patient
+     */
+    public String dateFormatter() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String dobOutput = formatter.format(dob);
+        return dobOutput;
     }
 
     /**
@@ -98,10 +98,11 @@ public class PatientIdentity {
             throw new IllegalArgumentException("Other PatientIdentity cannot be null.");
         }
         // Returns true if name is less, OR if names match and DOB is earlier
-        return (name.isLessThan(other.name)) || (name.match(other.name) && dob.isBefore(other.dob));
+        return (name.isLessThan(other.name)) || (name.match(other.name) && dob.before(other.dob));
     }
 
     public String toString() {
-        return "name: " + name.toString() + " dob: " + dob.toString();
+
+        return "name: " + name.toString() + " dob: " + dateFormatter();
     }
 }

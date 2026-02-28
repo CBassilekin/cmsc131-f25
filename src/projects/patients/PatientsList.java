@@ -1,11 +1,13 @@
-package projects.hospital;
+package projects.patients;
 
 public class PatientsList {
 
-    private Patients[] patientsList;
-    private final int MAX_PATIENTS = 1000;
-    private int nextAvailIdx = 0;
-    private int numPatients = 0;
+    private Patient[] patientsList;
+    private final int MAX_PATIENTS = 10000;
+    private int numPatients;
+    private int indexOfIterator;
+    private Patient nextPatient;
+    private int firstAvailableIndex = 0;
 
     public PatientsList() {
 
@@ -24,19 +26,21 @@ public class PatientsList {
 
         // handle the cases when the patient is null or already exists in the list
         // this operation is not allowed and should return false
-        if (pat == null || patientExists(pat.getId())) {
+        if (pat == null || patientExists(pat.getIdentity()) || listIsFull()) {
             return false;
         }
-
-        // a corner case exists when the list is full and needs to be resized
-        if (nextAvailIdx > patientsList.length) {
-            resizeArray();
-        }
+        // handle the case when the patients list is full and cannot accommodate more
+        // patients
+        // this operation is not allowed and should throw false.
 
         // handle the case when the patient is added successfully to the list
         // this operation should return true
         // patientsList[nextAvailIdx++] = pat;
         return add_ordered(pat);
+    }
+
+    public int getSize() {
+        return patientsList.length;
     }
 
     /**
@@ -47,28 +51,13 @@ public class PatientsList {
      */
     public boolean patientExists(PatientIdentity id) {
         for (int i = 0; i < patientsList.length; i++) {
-            if (patientsList != null && patientsList[i].getId().equals(id)) {
-                return true;
+            if (patientsList[i] != null) {
+                if (patientsList[i].getIdentity().match(id)) {
+                    return true;
+                }
             }
         }
         return false;
-    }
-
-    /**
-     * the method resizes the array of patients when it is full,
-     * it creates a new array with a larger size and copies the existing patients
-     * to the new array, then it replaces the old array with the new one.
-     * 
-     */
-    public void resizeArray() {
-        // we will add 200 more slots to the array when it is full, this is an arbitrary
-        // number
-        int newSize = patientsList.length + 200;
-        Patient[] newArray = new Patient[newSize];
-        for (int i = 0; i < patientsList.length; i++) {
-            newArray[i] = patientsList[i];
-        }
-        patientsList = newArray;
     }
 
     /**
@@ -77,11 +66,13 @@ public class PatientsList {
      * @return the number of patients in the list
      */
     public int getNumPatients() {
+        numPatients = 0;
         if (patientsList != null) {
             for (int i = 0; i < patientsList.length; i++) {
                 if (patientsList[i] != null) {
                     numPatients++;
                 }
+
             }
         }
         return numPatients;
@@ -95,33 +86,115 @@ public class PatientsList {
      * 
      */
     public Patient find(PatientIdentity id) {
+        return binarySearch(id);
+    }
+
+    /**
+     * the method checks if the patients list is full and cannot accommodate more
+     * patients, this operation is not allowed and should throw false.
+     */
+    private boolean listIsFull() {
         for (int i = 0; i < patientsList.length; i++) {
-            if (patientsList != null && patientsList[i].getId().equals(id)) {
-                return patientsList[i];
+            if (patientsList[i] == null) {
+                return false;
             }
+        }
+        return true;
+    }
+
+    /**
+     * @param pat the patient to be added to the list in an ordered manner based on
+     *            their identity
+     * @return true if the patient is added successfully to the list, false
+     *         otherwise
+     */
+    private boolean add_ordered(Patient pat) {
+        if (pat == null || patientExists(pat.getIdentity())) {
+            return false;
+        }
+
+        // add from the end of the list
+        // if the array is completely empty, add the patient at the first index
+        if (patientsList[0] == null) {
+            patientsList[0] = pat;
+            return true;
+        }
+
+        // else if the array is not empty, add the patient at the first available index
+        // add from the end of the list
+
+        findFirstAvailableIndex(patientsList);
+
+        while (firstAvailableIndex > 0
+                && pat.getIdentity().isLessThan(patientsList[firstAvailableIndex - 1].getIdentity())) {
+            patientsList[firstAvailableIndex] = patientsList[firstAvailableIndex - 1];
+            firstAvailableIndex--;
+        }
+        patientsList[firstAvailableIndex] = pat;
+        return true;
+
+    }
+
+    private int findFirstAvailableIndex(Patient[] pat) {
+
+        // find the first available index
+        for (int i = 0; i < patientsList.length; i++) {
+            if (patientsList[i] == null) {
+                firstAvailableIndex = i;
+                i++;
+                break;
+
+            }
+        }
+        return firstAvailableIndex;
+    }
+
+    private void setIteratorToStart() {
+        indexOfIterator = -1;
+    }
+
+    public void initIterator() {
+        setIteratorToStart();
+    }
+
+    public int indexOfIteration() {
+        return indexOfIterator;
+    }
+
+    public Patient next() {
+
+        nextPatient = patientsList[indexOfIterator + 1];
+
+        if (nextPatient != null) {
+            indexOfIterator++;
+            return nextPatient;
+        } else {
+            initIterator();
         }
         return null;
     }
 
-    public boolean add_ordered(Patient pat) {
-        if (pat == null || patientExists(pat.getId())) {
-            return false;
-        }
+    private Patient binarySearch(PatientIdentity id) {
+        if (id != null) {
+            int left = 0;
+            int right = findFirstAvailableIndex(patientsList) - 1;
 
-        if (nextAvailIdx > patientsList.length) {
-            resizeArray();
-        }
+            while (left <= right) {
+                int mid = (left + right) / 2;
+                if (patientsList[mid] != null) {
 
-        int i = 0;
-        while (i < nextAvailIdx && patientsList[i].getId().isLessThan(pat.getId())) {
-            i++;
-        }
+                    if (patientsList[mid].getIdentity().equals(id)) {
+                        return patientsList[mid]; // Patient found
+                    } else if (patientsList[mid].getIdentity().isLessThan(id)) {
+                        left = mid + 1; // Search in the right half
+                    } else {
+                        right = mid - 1; // Search in the left half
+                    }
 
-        for (int j = nextAvailIdx; j > i; j--) {
-            patientsList[j] = patientsList[j - 1];
+                }
+            }
         }
-        patientsList[i] = pat;
-        nextAvailIdx++;
-        return true;
+        return null; // Patient not found
     }
+
 }
