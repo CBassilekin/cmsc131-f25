@@ -24,6 +24,9 @@ public class NameTest {
         last = "Smith";
     }
 
+    /**
+     * Test confirm that our constructor builds correctly
+     */
     @Test
     void testConstructorWithNotNullParameters() {
         name = new Name(first, last);
@@ -100,6 +103,9 @@ public class NameTest {
         // assertEquals(last, name.getLastName());
     }
 
+    /**
+     * Test checks that two names match regardless of capitalization
+     */
     @Test
     void testMatchReturnsTrueOrFalse() {
         name = new Name(first, last);

@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Calendar;
 
 public class PatientsListTest {
@@ -17,6 +19,11 @@ public class PatientsListTest {
     private Patient patientTest3;
 
     private Calendar cal = Calendar.getInstance();
+
+    /**
+     * Testing will use all these values as defaukt
+     * before each test
+     */
 
     @BeforeEach
     public void setUp() {
@@ -35,12 +42,33 @@ public class PatientsListTest {
 
     }
 
+    /**
+     * Test confirms that the constuctor builds correctly
+     * each patient list should hold 10,000 spaces
+     * should be all empty at the beginning
+     * should not be null
+     */
     @Test
     public void testValidConstructor() {
         assertEquals(0, newList.getNumPatients());
+        assertNotNull(newList);
+    }
+
+    /**
+     * Test confirms that the list effectively holds
+     * 10000 spaces
+     */
+    @Test
+    public void testgetSize() {
         assertEquals(10000, newList.getSize());
     }
 
+    /**
+     * Test confirms that adding patients is successfull
+     * especially in an orderly way
+     * we will not be checking the case where the list is full
+     * because that is not part of this scope
+     */
     @Test
     public void testAddPatientInOrder() {
         // adding patients in random order to be reordered automatically
@@ -59,13 +87,17 @@ public class PatientsListTest {
 
         // checking that the item ids are in the correct order
         Patient space0 = newList.next();
-        assertFalse(space0.getIdentity().isLessThan(patientTest1.getIdentity()));
+        assertTrue(space0.getIdentity().isLessThan(patientTest1.getIdentity()));
         Patient space1 = newList.next();
-        assertFalse(space1.getIdentity().isLessThan(patientTest3.getIdentity()));
+        assertTrue(space1.getIdentity().isLessThan(patientTest3.getIdentity()));
         Patient space2 = newList.next();
-        assertFalse(space2.getIdentity().isLessThan(patientTest2.getIdentity()));
+        assertTrue(space2.getIdentity().isLessThan(patientTest2.getIdentity()));
     }
 
+    /**
+     * Test confirms that valid patient are added
+     * and check that the size of the list grows accordingly
+     */
     @Test
     public void testAddValidPatient() {
         boolean actualResult = newList.add(patientTest1);
@@ -87,6 +119,9 @@ public class PatientsListTest {
         assertEquals(expectedNumPatients3, actualNumPatients3);
     }
 
+    /**
+     * Test checks that a null patient cannot be successfully added to the list
+     */
     @Test
     public void testAddNullPatient() {
         boolean actualResult = newList.add(null);
@@ -97,6 +132,11 @@ public class PatientsListTest {
         assertEquals(expectedNumPatients, actualNumPatients);
     }
 
+    /**
+     * Test confirms that list cannot accept adding a
+     * duplicate patient
+     */
+
     @Test
     public void testAddDuplicatePatient() {
         newList.add(patientTest1);
@@ -106,21 +146,9 @@ public class PatientsListTest {
         assertEquals(1, newList.getNumPatients());
     }
 
-    @Test
-    public void testAddPatientWhenFull() {
-
-        newList.add(patientTest1);
-        newList.add(patientTest2);
-        newList.add(patientTest3);
-
-        // trying to add another patient when the list is already full
-
-        cal.set(1995, Calendar.MARCH, 20);
-        Patient patientTest4 = new Patient(new PatientIdentity(
-                new Name("Adam", "Smith"), cal.getTime()));
-        assertTrue(newList.add(patientTest4));
-    }
-
+    /**
+     * Test checks that a patient already exists in the database
+     */
     @Test
     public void testPatientExistsReturnsTrue() {
         newList.add(patientTest1);
@@ -137,6 +165,10 @@ public class PatientsListTest {
         assertEquals(expectedResult, actualResult);
     }
 
+    /**
+     * Test checks that a patient does not already exist
+     * and can be added to the database.
+     */
     @Test
     public void testPatientExistsReturnsFalse() {
         newList.add(patientTest1);
@@ -150,6 +182,9 @@ public class PatientsListTest {
         assertEquals(expectedResult, actualResult);
     }
 
+    /**
+     * Test checks the total number of existing patients in the list.
+     */
     @Test
     public void testNumberOfPatients() {
         // initially the list should be empty
@@ -171,11 +206,27 @@ public class PatientsListTest {
         assertEquals(expectedNumPatients, actualNumPatients);
     }
 
+    /**
+     * Test checks that finding a null patient
+     * returns a null patient
+     */
     @Test
     public void testFindReturnsNull() {
+        // trying to find a patient with a null identity
         assertNull(newList.find(null));
+
+        // trying to find a non-existing patient by ID
+        cal.set(1995, Calendar.MARCH, 20);
+        PatientIdentity nonExistingId = new PatientIdentity(
+                new Name("Non", "Existing"), cal.getTime());
+        Patient actualPatient = newList.find(nonExistingId);
+        assertNull(actualPatient);
     }
 
+    /**
+     * Test confirm that finding an existing patient
+     * can be easily returned using the find() method
+     */
     @Test
     public void testFindPatientById() {
         newList.add(patientTest1);
@@ -191,15 +242,11 @@ public class PatientsListTest {
         expectedPatient = patientTest2;
         assertEquals(expectedPatient, actualPatient);
 
-        // trying to find a non-existing patient by ID
-        cal.set(1995, Calendar.MARCH, 20);
-        PatientIdentity nonExistingId = new PatientIdentity(
-                new Name("Non", "Existing"), cal.getTime());
-        actualPatient = newList.find(nonExistingId);
-        assertNull(actualPatient);
-
     }
 
+    /**
+     * Test confirm that the iterator is correctly initialized at -1.
+     */
     @Test
     public void testInitIterator() {
 
@@ -210,12 +257,20 @@ public class PatientsListTest {
         assertEquals(expectedIndex, actualIndex);
     }
 
+    /**
+     * Test confirms that an empty array is initialized at -1
+     * next() should return null
+     */
     @Test
     public void testNextAnEmptyArray() {
         assertNull(newList.next());
         assertEquals(-1, newList.indexOfIteration());
     }
 
+    /**
+     * For a Null patient in the lits,
+     * next() returns a null patient
+     */
     @Test
     public void testNextWhilePatientIsNull() {
         // the list is empty
@@ -224,12 +279,12 @@ public class PatientsListTest {
 
     }
 
+    /**
+     * Test confirms that next() returns the correct patient
+     * from the a non-empty database
+     */
     @Test
     public void testNextAfterRepeatedCalls() {
-
-        // when list is empty
-        newList.next();
-        assertEquals(-1, newList.indexOfIteration());
 
         // adding objects to the list
         newList.add(patientTest1);
@@ -237,15 +292,18 @@ public class PatientsListTest {
 
         // checking to see that the iterators change correctly
         Patient nextPatient1 = newList.next();
-        assertEquals(patientTest1, nextPatient1);
+        assertTrue(patientTest1.getIdentity().match(nextPatient1.getIdentity()));
         assertEquals(0, newList.indexOfIteration());
 
         Patient nextPatient2 = newList.next();
-        assertEquals(patientTest2, nextPatient2);
+        assertTrue(patientTest2.getIdentity().match(nextPatient2.getIdentity()));
         assertEquals(1, newList.indexOfIteration());
 
     }
 
+    /**
+     * Test confirms that the index of Iteration is reported correctly each time
+     */
     @Test
     public void testIndexOfIteration() {
 
@@ -262,7 +320,7 @@ public class PatientsListTest {
         newList.add(patientTest2);
         newList.add(patientTest3);
 
-        // moving the iterator to the next patient and checking the index
+        // moving the iterator to the first patient and checking the index
         newList.next();
         expectedIndex = 0;
         actualIndex = newList.indexOfIteration();

@@ -15,6 +15,10 @@ public class PatientIdentityTest {
     private Date dob;
     private Calendar cal = Calendar.getInstance();
 
+    /**
+     * Test default values for the PatientIdentity Class
+     */
+
     @BeforeEach
     public void setUp() {
         name = new Name("John", "Doe");
@@ -182,6 +186,10 @@ public class PatientIdentityTest {
         assertEquals(expectedResult, actualResult);
     }
 
+    /**
+     * Tests confirms that methid IsLessThan() returns false
+     * while comparing two patients' identity
+     */
     @Test
     public void testIsLessThanReturnsFalse() {
         // names and dates of birth are different
@@ -203,6 +211,10 @@ public class PatientIdentityTest {
         actualResult = patientIdentity.isLessThan(patientIdentity3);
     }
 
+    /**
+     * Tests confirms that methid IsLessThan() returns true
+     * while comparing two patients' identity
+     */
     @Test
     public void testIsLessThanReturnsTrue() {
 

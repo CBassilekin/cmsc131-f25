@@ -8,6 +8,12 @@ public class PatientsList {
     private int indexOfIterator;
     private Patient nextPatient;
     private int firstAvailableIndex = 0;
+    private int visitedIndex = 0;
+
+    /**
+     * Building the constructot for the PAtientsList Class
+     * PatientList is an array of 10000 patients
+     */
 
     public PatientsList() {
 
@@ -39,6 +45,11 @@ public class PatientsList {
         return add_ordered(pat);
     }
 
+    /**
+     * This method returns the length of the patients list
+     * 
+     * @return the length - how many spaces are available?
+     */
     public int getSize() {
         return patientsList.length;
     }
@@ -135,6 +146,13 @@ public class PatientsList {
 
     }
 
+    /**
+     * This method helps find the first available index in the patients array.
+     * 
+     * @param pat - an array of patients
+     * @return firstAvailableIndex - the first null index after the greatest object
+     *         in the patients array
+     */
     private int findFirstAvailableIndex(Patient[] pat) {
 
         // find the first available index
@@ -149,31 +167,65 @@ public class PatientsList {
         return firstAvailableIndex;
     }
 
+    /**
+     * This method helps set the iterator to start
+     */
+
     private void setIteratorToStart() {
         indexOfIterator = -1;
     }
+
+    /**
+     * This method initializes the iterator to start
+     */
 
     public void initIterator() {
         setIteratorToStart();
     }
 
+    /**
+     * This method provides the current index of the iteration
+     * 
+     * @return indexOfIterator - index where the iteration is at
+     */
     public int indexOfIteration() {
         return indexOfIterator;
     }
 
+    /**
+     * 
+     * This method allows to iterate over the patients list
+     * looking at each item in order of placement and identifying the patient
+     * being looked at a given moment
+     * 
+     * @return Patient - the current patient in the list
+     */
     public Patient next() {
+        Patient visitedPatient = null;
 
-        nextPatient = patientsList[indexOfIterator + 1];
+        nextPatient = patientsList[visitedIndex];
+        indexOfIterator = visitedIndex;
 
         if (nextPatient != null) {
-            indexOfIterator++;
-            return nextPatient;
+            visitedPatient = nextPatient;
+            visitedIndex++;
+
         } else {
             initIterator();
+            return null;
         }
-        return null;
+        return visitedPatient;
     }
 
+    /**
+     * This methods searches over the list quickly
+     * and helps find the patient with a given identity
+     * using the upper end and lower end of the list
+     * 
+     * @param id - a given patient identity
+     * @return - the patient matching that identity or null if such patient does not
+     *         exist
+     */
     private Patient binarySearch(PatientIdentity id) {
         if (id != null) {
             int left = 0;

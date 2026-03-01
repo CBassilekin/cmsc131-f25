@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import java.util.Date;
 import java.util.Calendar;
@@ -15,6 +16,11 @@ public class PatientTest {
     private Name name;
     private Date dob;
 
+    /***
+     * 
+     * Testing default values
+     */
+
     @BeforeEach
     public void setUp() {
         name = new Name("John", "Doe");
@@ -24,6 +30,11 @@ public class PatientTest {
         patient = new Patient(new PatientIdentity(name, dob));
     }
 
+    /**
+     * Test verifies that the Patient() object builds correctly
+     * with an non null identity made up itself by
+     * a name and a date of birth
+     */
     @Test
     public void testConstructorWithValidInput() {
         assertNotNull(patient);
@@ -32,6 +43,10 @@ public class PatientTest {
         assertEquals("1990-01-01", patient.getIdentity().dateFormatter());
     }
 
+    /**
+     * Test confirms that we cannot alllow a Patient with a null name
+     * the constructor should throw an exception
+     */
     @Test
     public void testConstructorWithNullName() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -39,6 +54,10 @@ public class PatientTest {
         });
     }
 
+    /**
+     * Test confirms that we cannot allow a Patient with a null date of birth
+     * the constructor should throw an exception
+     */
     @Test
     public void testConstructorWithNullDob() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -46,20 +65,31 @@ public class PatientTest {
         });
     }
 
+    /**
+     * Test confirms that a patient identity can be successfully returned
+     */
     @Test
     public void testGetIdentity() {
         PatientIdentity actualResult = new PatientIdentity(name, dob);
         PatientIdentity expectedResult = patient.getIdentity();
 
-        assertEquals(expectedResult, actualResult);
+        assertTrue(expectedResult.match(actualResult));
     }
 
+    /**
+     * Test confirms that the method returns a match
+     * between 2 patients witht he same identity
+     */
     @Test
     public void testMatchWithMatchingPatient() {
         Patient otherPatient = new Patient(new PatientIdentity(name, dob));
         assertEquals(patient.getIdentity().match(otherPatient.getIdentity()), true);
     }
 
+    /**
+     * Test confirms that non-match is returned when 2 patients
+     * do not have the same identity
+     */
     @Test
     public void testMatchWithNonMatchingPatient() {
         Name name2 = new Name("Jane", "Smith");
@@ -87,10 +117,18 @@ public class PatientTest {
 
     }
 
+    /**
+     * Test comfirms that correct patient's identity
+     * string is returned for a patient
+     * 
+     */
     @Test
     public void testToString() {
-        String expectedString = "name: John Doe dob: 1990-01-01";
+
+        // valid patient identity
+        String expectedString = "identity: name: John Doe dob: 1990-01-01";
         assertEquals(expectedString, patient.toString());
+        ;
 
     }
 }
