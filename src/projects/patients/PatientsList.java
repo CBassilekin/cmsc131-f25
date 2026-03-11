@@ -1,14 +1,20 @@
-package projects.patients;
+
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class PatientsList {
 
     private Patient[] patientsList;
-    private final int MAX_PATIENTS = 10000;
+    private final int MAX_PATIENTS = 1000;
     private int numPatients;
     private int indexOfIterator;
     private Patient nextPatient;
     private int firstAvailableIndex = 0;
     private int visitedIndex = 0;
+    private Scanner scanner;
+    private File patientsFile = new File("data/patients1000.csv");
 
     /**
      * Building the constructot for the PAtientsList Class
@@ -206,7 +212,7 @@ public class PatientsList {
         nextPatient = patientsList[visitedIndex];
         indexOfIterator = visitedIndex;
 
-        if (nextPatient != null) {
+        if (nextPatient != null || indexOfIterator < patientsList.length) {
             visitedPatient = nextPatient;
             visitedIndex++;
 
@@ -247,6 +253,154 @@ public class PatientsList {
             }
         }
         return null; // Patient not found
+    }
+
+    public boolean directAdd(Patient pat) {
+
+        if (pat == null) {
+            return false;
+        } else {
+
+            for (int i = 0; i < patientsList.length; i++) {
+                if (patientsList[i] == null) {
+                    patientsList[i] = pat;
+                    break;
+
+                }
+            }
+        }
+        return true; // Always returns the full array
+
+    }
+
+    public boolean mergeSort(Patient[] list) {
+
+        int i = 0;
+
+        // an empty list should return false as there will be no data to mergeSort
+        if (list == null) {
+            return false;
+        }
+
+        // a 1-item list is automatically sorted and should return true
+        if (list.length <= 1) {
+            return true;
+        }
+
+        else {
+            // finding the middle index of the array
+            int mid = list.length / 2;
+            int upper = (list.length - mid); // remaining spaces after mid
+
+            // let us split the list into halves
+            Patient[] lowerList = new Patient[mid];
+            Patient[] upperList = new Patient[upper];
+
+            // addind items from the unordered list into each splited list
+            for (i = 0; i < mid; i++) {
+                lowerList[i] = list[i];
+            }
+            for (i = mid; i < list.length; i++) {
+                upperList[i - mid] = list[i];
+            }
+
+            // recursively sort both halves
+            mergeSort(lowerList);
+            mergeSort(upperList);
+
+            // reset counters here
+            i = 0;
+            int j = 0;
+            int k = 0;
+
+            // Main comparison loop
+            while (i < lowerList.length && j < upperList.length) {
+
+                if (lowerList[i].getIdentity().isLessThan(upperList[j].getIdentity())) {
+                    list[k++] = lowerList[i++];
+
+                } else {
+                    list[k++] = upperList[j++];
+                }
+            }
+
+            // Copy remaining elements from lowerList (if any)
+            while (i < lowerList.length) {
+                list[k++] = lowerList[i++];
+            }
+
+            // Copy remaining elements from upperList (if any)
+            while (j < upperList.length) {
+                list[k++] = upperList[j++];
+            }
+
+        }
+        System.out.println("this method returns true");
+
+        return true;
+    }
+
+    public boolean saveToFile(String fileName) {
+
+        File inputFile = new File("data/input.csv");
+        FileWriter writer = null;
+        try {
+
+            writer = new FileWriter(inputFile);
+            while (indexOfIterator < patientsList.length - 1) {
+                String line = next().toCSV();
+                if (line != null) {
+                    writer.write(line + "\n");
+                }
+
+            }
+            writer.close();
+            System.out.println("this method returns true");
+
+            return true;
+
+        } catch (
+
+        IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean importFromFile() {
+        Patient newPatientFromFile = null;
+
+        try {
+            scanner = new Scanner(patientsFile);
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+
+                if (line == null) {
+                    throw new IllegalArgumentException("line must not be null.");
+                } else {
+                    newPatientFromFile = Patient.makePatient(line);
+                    directAdd(newPatientFromFile);
+                }
+
+                printTokens(line);
+            }
+            scanner.close();
+            mergeSort(patientsList);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+
+        }
+    }
+
+    public static void printTokens(String line) {
+        String[] tokens = line.split(",");
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.print(tokens[i] + " ");
+        }
+        System.out.println();
     }
 
 }

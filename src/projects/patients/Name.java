@@ -1,4 +1,4 @@
-package projects.patients;
+
 
 public class Name {
     private String firstName;
