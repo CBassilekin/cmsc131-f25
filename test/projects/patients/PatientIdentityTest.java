@@ -1,5 +1,3 @@
-package projects.patients;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.Assert.assertNotNull;
@@ -261,7 +259,7 @@ public class PatientIdentityTest {
      * 
      */
     @Test
-    public void testToString() {
+    public void testIdentityToString() {
         // also serves as a test to the private method dateFormatter();
         String actualString = "name: " + name.toString() + " dob: " + patientIdentity.dateFormatter();
         String expectedString = "name: John Doe dob: 1990-01-01";

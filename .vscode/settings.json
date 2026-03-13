@@ -3,8 +3,9 @@
         "/opt/junit/junit-platform-console-standalone.jar"
     ],
     "java.project.sourcePaths": [
-        "src",
-        "test"
+        "src/projects/patients",
+        "test/projects/patients",
+        "data/"
     ],
     "editor.rulers": [
         80

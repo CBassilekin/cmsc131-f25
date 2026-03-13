@@ -29,13 +29,10 @@ public class Patient {
     }
 
     public UUID setUUID() {
-        UUID patientUUID = null;
         if (uuid == null) {
-            patientUUID = UUID.randomUUID();
-        } else {
-            patientUUID = uuid;
+            uuid = UUID.randomUUID();
         }
-        return patientUUID;
+        return uuid;
     }
 
     /**
@@ -57,8 +54,8 @@ public class Patient {
      * @return a string representation of the Patient object
      * 
      */
-    public String toString() {
-        return "identity: " + identity.toString();
+    public String patientToString() {
+        return "Patient: " + getIdentity().identityToString();
     }
 
     /**
@@ -67,8 +64,6 @@ public class Patient {
      * // 6f577751-c766-401f-b733-04561431efc5"
      */
     public String toCSV() {
-
-        String line = null;
         if (getIdentity().getName().getLastName() != null) {
             last = getIdentity().getName().getFirstName();
 
@@ -83,48 +78,68 @@ public class Patient {
         }
         String uuidToString = setUUID().toString();
 
-        line = last + "," + first + "," + dobStr + "," + uuidToString;
+        String line = last + "," + first + "," + dobStr + "," + uuidToString;
         return line;
     }
 
     /**
-     * this method will take a line from a file and build a patient
+     * This method will take a line from a file and build a patient
      * object
+     * while the patient identity comes in this order : first, last, dob
+     * the patients file has the first data inverted : last,first, dob, uuid
      */
     public static Patient makePatient(String line) {
-        String[] tokens = line.split(",\\s*"); // Handles optional spaces after commas
 
-        if (tokens.length < 4) {
-            throw new IllegalArgumentException("Insufficient information to create a patient");
+        if (line == null) {
+            throw new IllegalArgumentException("line must not be null.");
+        } else {
+
+            String[] tokens = line.split(",\\s*"); // Handles optional spaces after commas
+
+            if (tokens.length < 4) {
+                throw new IllegalArgumentException(
+                        "Insufficient information to create a patient");
+            }
+
+            // Array indices: 0=Last, 1=First, 2=Date, 3=UUID
+            first = tokens[0].trim();
+            last = tokens[1].trim();
+            date = stringToDate(tokens[2].trim());
+
+            // Validate UUID and Date before creating
+            if (date != null && isValidUUID(tokens[3].trim())) {
+                uuid = UUID.fromString(tokens[3].trim());
+                // Assuming PatientIdentity takes (Name, Date) or (Name, Date, UUID)
+                return new Patient(new PatientIdentity(new Name(first, last), date));
+            } else {
+                throw new IllegalArgumentException("Invalid date or UUID format");
+            }
         }
 
-        // Array indices: 0=Last, 1=First, 2=Date, 3=UUID
-        last = tokens[0].trim().toLowerCase();
-        first = tokens[1].trim().toLowerCase();
-        date = stringToDate(tokens[2].trim());
-
-        // Validate UUID and Date before creating
-        if (date != null && isValidUUID(tokens[3].trim())) {
-            uuid = UUID.fromString(tokens[3].trim());
-            // Assuming PatientIdentity takes (Name, Date) or (Name, Date, UUID)
-            return new Patient(new PatientIdentity(new Name(first, last), date));
-        }
-
-        throw new IllegalArgumentException("Invalid date or UUID format");
     }
 
+    /**
+     * This method formats a string into a date
+     * 
+     * @param dateStr - any given dstring which represents a date
+     * @return a date in the format indicated "yyyy-MM-dd"
+     */
     public static Date stringToDate(String dateStr) {
+        // 1. Handle null or empty input early
+        if (dateStr == null || dateStr.isEmpty()) {
+            return null;
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         formatter.setLenient(false);
-        Date date = null;
-        try {
-            date = formatter.parse(dateStr);
 
+        try {
+            // 2. Perform the parse (this was trapped inside the 'if' before)
+            return formatter.parse(dateStr);
         } catch (ParseException e) {
+            // 3. Return null if the string doesn't match the format or is an invalid date
             return null;
         }
-        return date;
     }
 
     /**
@@ -133,7 +148,7 @@ public class Patient {
      * @param uuidStr -- UUID in a string format
      * @return true if the UUID matches the correct fotmat hexadecimal pattern
      */
-    public static boolean validUUID(String uuidStr) {
+    public boolean validUUID(String uuidStr) {
         if (uuidStr == null) {
             return false;
         }
@@ -144,8 +159,8 @@ public class Patient {
     }
 
     /**
-     * Validates a UUID string using UUID.fromString().
-     * This method ensures the string is in the correct UUID format.
+     * A second validation that a UUID string using UUID.fromString().
+     * truly points to a UUID.
      *
      * @param uuidStr the string to validate
      * @return true if valid UUID, false otherwise

@@ -1,4 +1,3 @@
-package projects.patients;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -6,7 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
+
 import java.util.Date;
+import java.util.UUID;
 import java.util.Calendar;
 
 public class PatientTest {
@@ -15,6 +18,7 @@ public class PatientTest {
     private Calendar cal = Calendar.getInstance();
     private Name name;
     private Date dob;
+    private UUID patientUUID;
 
     /***
      * 
@@ -28,6 +32,7 @@ public class PatientTest {
         dob = cal.getTime();
 
         patient = new Patient(new PatientIdentity(name, dob));
+
     }
 
     /**
@@ -126,9 +131,175 @@ public class PatientTest {
     public void testToString() {
 
         // valid patient identity
-        String expectedString = "identity: name: John Doe dob: 1990-01-01";
-        assertEquals(expectedString, patient.toString());
-        ;
+        String expectedString = "Patient: name: John Doe dob: 1990-01-01";
+        assertEquals(expectedString, patient.patientToString());
+    }
+
+    @Test
+    public void testSetUUID() {
+        // patient does not already have an UUID
+        assertNull(patientUUID);
+
+        // then patient is assigned one
+        UUID actualResult = patient.setUUID();
+        assertNotNull(actualResult);
+
+        // the case where Patient already has an UUID
+        UUID expectedResult = actualResult;
+        UUID actualResult2 = patient.setUUID();
+        assertEquals(expectedResult, actualResult2);
 
     }
+
+    @Test
+    public void testToCSV() {
+        patientUUID = patient.setUUID();
+        String actualResult = "John,Doe,1990-01-01," + patientUUID.toString();
+        String expectedResult = patient.toCSV();
+        assertEquals(expectedResult, actualResult);
+
+    }
+
+    /*
+     * Test confirms that makePatient() method throws an exception
+     * when a null argument string is passed.
+     */
+    @Test
+    void testMakePatientThrowsOnInsufficientData() {
+        Exception exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Patient.makePatient("john,doe,1990-01-01");
+                });
+        assertEquals(
+                "Insufficient information to create a patient",
+                exception.getMessage());
+    }
+
+    @Test
+    void testMakePatientThrowsOnInvalidDate() {
+
+        /// date does not exist in the calendar
+        Exception exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Patient.makePatient("john,doe,1990-02-31,3c26d972-360a-436c-b1e8-8e5f2bde9490");
+                });
+        assertEquals(
+                "Invalid date or UUID format",
+                exception.getMessage());
+
+        // date formatting is incorrect
+        exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Patient.makePatient("john,doe,1990/03/31,3c26d972-360a-436c-b1e8-8e5f2bde9490");
+                });
+        assertEquals(
+                "Invalid date or UUID format",
+                exception.getMessage());
+    }
+
+    @Test
+    void testMakePatientThrowsOnInvalidUUID() {
+
+        // insufficient digit
+        Exception exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Patient.makePatient("john,doe,1990-02-31,3c26d972-360-436c-b1e8-8e5f2bde9490");
+                });
+        assertEquals(
+                "Invalid date or UUID format",
+                exception.getMessage());
+
+        // incorrect alphanumeric format
+        exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Patient.makePatient("john,doe,1990-02-31,30260972-360-4360-0108-805020009490");
+                });
+        assertEquals(
+                "Invalid date or UUID format",
+                exception.getMessage());
+    }
+
+    /*
+     * Test confirms that make() method throws an exception
+     * when a null argument string is passed.
+     */
+    @Test
+    void testMakePatientThrowsOnNullInput() {
+        Exception exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Patient.makePatient(null);
+                });
+        assertEquals(
+                "line must not be null.",
+                exception.getMessage());
+    }
+
+    /*
+     * Test confirms that make preserves a given account data during the factory.
+     */
+    @Test
+    void testMakePatientPreservesData() {
+        patientUUID = patient.setUUID();
+        Patient madePatient = Patient.makePatient(
+                "John,Doe,1990-01-01," + patientUUID.toString());
+        assertEquals(patient.getIdentity().getName().getFirstName(),
+                madePatient.getIdentity().getName().getFirstName());
+        assertEquals(
+                patient.getIdentity().getName().getLastName(),
+                madePatient.getIdentity().getName().getLastName());
+
+        assertEquals(
+                patient.getIdentity().dateFormatter(),
+                madePatient.getIdentity().dateFormatter());
+        assertEquals(
+                patientUUID,
+                madePatient.setUUID());
+    }
+
+    @Test
+    public void testStringToDate() {
+        // valid String
+        assertNotNull(Patient.stringToDate("1990-01-01"));
+
+        // when a null string is entered
+        Date actualResult = Patient.stringToDate(null);
+        assertNull(actualResult);
+
+        // invalid date (one that does not exist in the calendar)
+        actualResult = Patient.stringToDate("2012-13-36");
+        assertNull(actualResult);
+    }
+
+    @Test
+    public void testValidUUID() {
+        // when a null string is passed
+        assertFalse(patient.validUUID(null));
+
+        // when a valid UUID is passed
+        assertTrue(patient.validUUID("3c26d972-360a-436c-b1e8-8e5f2bde9490"));
+
+        // when an invalid UUID is passed
+        assertFalse(patient.validUUID("3c26d972-360-436c-b1e8-8e5f2bde9490"));
+
+    }
+
+    @Test
+    public void testIsValidUUID() {
+        // when a null string is passed
+        assertFalse(Patient.isValidUUID(null));
+
+        // when a valid UUID is passed
+        assertTrue(Patient.isValidUUID("3c26d972-360a-436c-b1e8-8e5f2bde9490"));
+
+        // when an invalid UUID is passed
+        assertFalse(Patient.isValidUUID("3c26d972-360-436c-b1e8-8e5f2bde9490"));
+
+    }
+
 }

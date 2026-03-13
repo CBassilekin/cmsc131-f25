@@ -48,7 +48,8 @@ public class Main {
     public static void phase2() {
 
         PatientsList list = new PatientsList();
-        list.importFromFile();
-        list.saveToFile("data/input.csv");
+        Patient[] listArray = new Patient[1000];
+        list.importFromFile("data/patients1000.csv", listArray);
+        list.saveToFile("data/patients_out.csv", listArray);
     }
 }

@@ -2,7 +2,7 @@
   "name": "CMSC131 Java (Ubuntu 24.04 + OpenJDK 21 + JUnit)",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": "..",
+    "context": ".."
   },
   "remoteUser": "ubuntu",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -15,7 +15,7 @@
       "settings": {
         "java.project.referencedLibraries": [
           "lib/junit-platform-console-standalone.jar"
-      ]
+        ]
       }
     }
   },

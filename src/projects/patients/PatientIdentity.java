@@ -1,5 +1,4 @@
 
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -101,7 +100,7 @@ public class PatientIdentity {
         return (name.isLessThan(other.name)) || (name.match(other.name) && dob.before(other.dob));
     }
 
-    public String toString() {
+    public String identityToString() {
 
         return "name: " + name.toString() + " dob: " + dateFormatter();
     }
