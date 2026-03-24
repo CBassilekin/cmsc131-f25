@@ -88,8 +88,9 @@ public class PatientIdentityTest {
      */
     @Test
     public void testDateFormatter() {
+
         String expectedResult = "1990-01-01";
-        String actualResult = patientIdentity.dateFormatter();
+        String actualResult = patientIdentity.dateFormatter(dob);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -261,7 +262,7 @@ public class PatientIdentityTest {
     @Test
     public void testIdentityToString() {
         // also serves as a test to the private method dateFormatter();
-        String actualString = "name: " + name.toString() + " dob: " + patientIdentity.dateFormatter();
+        String actualString = "name: " + name.toString() + " dob: " + patientIdentity.dateFormatter(dob);
         String expectedString = "name: John Doe dob: 1990-01-01";
         assertEquals(expectedString, actualString);
     }

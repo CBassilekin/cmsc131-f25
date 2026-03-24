@@ -1,5 +1,4 @@
 
-
 public class Name {
     private String firstName;
     private String lastName;
@@ -58,11 +57,11 @@ public class Name {
 
         if (other != null) {
 
-            String firstToLowercase = other.getFirstName().toLowerCase();
-            String lastToLowercase = other.getLastName().toLowerCase();
+            String first = other.getFirstName();
+            String last = other.getLastName();
 
-            return (firstName.toLowerCase().equals(firstToLowercase)
-                    && lastName.toLowerCase().equals(lastToLowercase));
+            return (firstName.equals(first)
+                    && lastName.equals(last));
         } else {
             throw new IllegalArgumentException("Cannot compare with null Name object.");
         }
@@ -96,11 +95,11 @@ public class Name {
             throw new IllegalArgumentException("Other name cannot be null");
         } else if (this.match(other)) {
             return false;
-        } 
-            int lastNameComparison = lastName.toLowerCase().compareTo(other.lastName.toLowerCase());
-           return (lastNameComparison < 0 || (lastNameComparison == 0 && 
-            firstName.toLowerCase().compareTo(other.firstName.toLowerCase()) < 0));
-           }
+        }
+        int lastNameComparison = lastName.toLowerCase().compareTo(other.lastName.toLowerCase());
+        return (lastNameComparison < 0 || (lastNameComparison == 0 &&
+                firstName.toLowerCase().compareTo(other.firstName.toLowerCase()) < 0));
+    }
 
     /**
      * Method to return a string representation of the Name object in the format

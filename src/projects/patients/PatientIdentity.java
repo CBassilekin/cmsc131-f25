@@ -6,6 +6,7 @@ public class PatientIdentity {
 
     private Date dob; // date of birth in format YYYY-MM-DD
     private Name name; // full name in format "First Last"
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * Constructor for PatientIdentity class that takes in a Name object
@@ -56,8 +57,7 @@ public class PatientIdentity {
      * 
      * @return String dobOutput - formatted dob of the patient
      */
-    public String dateFormatter() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    public String dateFormatter(Date dob) {
         String dobOutput = formatter.format(dob);
         return dobOutput;
     }
@@ -77,7 +77,7 @@ public class PatientIdentity {
         if (other == null) {
             throw new IllegalArgumentException("Other PatientIdentity cannot be null.");
         }
-        return (name.match(other.getName()) && dob.equals(other.getDob()));
+        return (name.match(other.getName()) && dateFormatter(dob).equals(dateFormatter((other.getDob()))));
     }
 
     /**
@@ -102,6 +102,6 @@ public class PatientIdentity {
 
     public String identityToString() {
 
-        return "name: " + name.toString() + " dob: " + dateFormatter();
+        return "name: " + name.toString() + " dob: " + dateFormatter(dob);
     }
 }

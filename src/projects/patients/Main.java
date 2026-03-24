@@ -3,9 +3,14 @@ import java.util.Date;
 
 public class Main {
 
+    private static PatientsList list;
+    private static PrescriptionList prList;
+    private static Patient[] listArray;
+
     public static void main(String[] args) {
         // phase1(); // setting the Patient
         phase2();
+        phase3();
 
     }
 
@@ -47,9 +52,28 @@ public class Main {
 
     public static void phase2() {
 
-        PatientsList list = new PatientsList();
-        Patient[] listArray = new Patient[1000];
+        list = new PatientsList();
+        listArray = new Patient[1000];
         list.importFromFile("data/patients1000.csv", listArray);
-        list.saveToFile("data/patients_out.csv", listArray);
+        // list.saveToFile("data/patients_out.csv", listArray);
+    }
+
+    public static void phase3() {
+        prList = new PrescriptionList();
+        Patient pat = listArray[0];
+        // list.readPrescriptions("data/prescriptions1000.csv", prList, listArray);
+        System.out.println(list.readPrescriptions("data/prescriptions1000.csv", prList, listArray));
+        PrescriptionList patPrList = pat.getList(prList, pat, listArray);
+
+        patPrList.init();
+        System.out.println(patPrList.next());
+        System.out.println(patPrList.next());
+        System.out.println(patPrList.next());
+        System.out.println(patPrList.next());
+        System.out.println(patPrList.next());
+        System.out.println(patPrList.next());
+
+        System.out.println(patPrList.getCount());
+
     }
 }

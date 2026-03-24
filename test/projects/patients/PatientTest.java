@@ -19,6 +19,7 @@ public class PatientTest {
     private Name name;
     private Date dob;
     private UUID patientUUID;
+    private PrescriptionList list;
 
     /***
      * 
@@ -30,6 +31,7 @@ public class PatientTest {
         name = new Name("John", "Doe");
         cal.set(1990, Calendar.JANUARY, 01); // Year, Month, Day
         dob = cal.getTime();
+        list = new PrescriptionList();
 
         patient = new Patient(new PatientIdentity(name, dob));
 
@@ -45,7 +47,7 @@ public class PatientTest {
         assertNotNull(patient);
         assertEquals("John", patient.getIdentity().getName().getFirstName());
         assertEquals("Doe", patient.getIdentity().getName().getLastName());
-        assertEquals("1990-01-01", patient.getIdentity().dateFormatter());
+        assertEquals("1990-01-01", patient.getIdentity().dateFormatter(dob));
     }
 
     /**
@@ -54,20 +56,26 @@ public class PatientTest {
      */
     @Test
     public void testConstructorWithNullName() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new PatientIdentity(null, dob);
-        });
-    }
+        Exception e = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    new Patient(new PatientIdentity(null, dob));
+                });
+        assertEquals("Patient's name cannot be null.", e.getMessage());
 
-    /**
-     * Test confirms that we cannot allow a Patient with a null date of birth
-     * the constructor should throw an exception
-     */
-    @Test
-    public void testConstructorWithNullDob() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new PatientIdentity(name, null);
-        });
+        e = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    new Patient(new PatientIdentity(new Name("a", "b"), null));
+                });
+        assertEquals("Patient's date of birth cannot be null.", e.getMessage());
+
+        e = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    new Patient(new PatientIdentity(null, dob));
+                });
+        assertEquals("Patient's name cannot be null.", e.getMessage());
     }
 
     /**
@@ -247,7 +255,7 @@ public class PatientTest {
     void testMakePatientPreservesData() {
         patientUUID = patient.setUUID();
         Patient madePatient = Patient.makePatient(
-                "John,Doe,1990-01-01," + patientUUID.toString());
+                "Doe,John,1990-01-01," + patientUUID.toString());
         assertEquals(patient.getIdentity().getName().getFirstName(),
                 madePatient.getIdentity().getName().getFirstName());
         assertEquals(
@@ -255,8 +263,8 @@ public class PatientTest {
                 madePatient.getIdentity().getName().getLastName());
 
         assertEquals(
-                patient.getIdentity().dateFormatter(),
-                madePatient.getIdentity().dateFormatter());
+                patient.getIdentity().dateFormatter(dob),
+                madePatient.getIdentity().dateFormatter(madePatient.getIdentity().getDob()));
         assertEquals(
                 patientUUID,
                 madePatient.setUUID());
@@ -279,13 +287,13 @@ public class PatientTest {
     @Test
     public void testValidUUID() {
         // when a null string is passed
-        assertFalse(patient.validUUID(null));
+        assertFalse(Patient.validUUID(null));
 
         // when a valid UUID is passed
-        assertTrue(patient.validUUID("3c26d972-360a-436c-b1e8-8e5f2bde9490"));
+        assertTrue(Patient.validUUID("3c26d972-360a-436c-b1e8-8e5f2bde9490"));
 
         // when an invalid UUID is passed
-        assertFalse(patient.validUUID("3c26d972-360-436c-b1e8-8e5f2bde9490"));
+        assertFalse(Patient.validUUID("3c26d972-360-436c-b1e8-8e5f2bde9490"));
 
     }
 
@@ -300,6 +308,21 @@ public class PatientTest {
         // when an invalid UUID is passed
         assertFalse(Patient.isValidUUID("3c26d972-360-436c-b1e8-8e5f2bde9490"));
 
+    }
+
+    @Test
+    public void testGetList() {
+
+        Calendar Cal = Calendar.getInstance();
+        Cal.set(2024, Calendar.FEBRUARY, 11);
+        Date issue = Cal.getTime();
+        Prescription patPr = new Prescription("heptapone", issue, 50, "Agrawal");
+        list.add(patPr);
+
+        assertNotNull(list);
+        list.init();
+
+        assertEquals(1, list.getCount());
     }
 
 }

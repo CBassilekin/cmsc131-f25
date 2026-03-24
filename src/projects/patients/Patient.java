@@ -13,9 +13,10 @@ public class Patient {
 
     public Patient(PatientIdentity id) {
         if (id == null) {
-            throw new IllegalArgumentException("Patient identity cannot be null");
+            throw new IllegalArgumentException("Patient' details cannot be null");
         }
         identity = id;
+
     }
 
     /**
@@ -72,8 +73,8 @@ public class Patient {
             first = getIdentity().getName().getLastName();
         }
 
-        if (getIdentity().dateFormatter() != null) {
-            dobStr = getIdentity().dateFormatter();
+        if (getIdentity().dateFormatter(getIdentity().getDob()) != null) {
+            dobStr = getIdentity().dateFormatter(getIdentity().getDob());
 
         }
         String uuidToString = setUUID().toString();
@@ -102,8 +103,8 @@ public class Patient {
             }
 
             // Array indices: 0=Last, 1=First, 2=Date, 3=UUID
-            first = tokens[0].trim();
-            last = tokens[1].trim();
+            last = tokens[0].trim();
+            first = tokens[1].trim();
             date = stringToDate(tokens[2].trim());
 
             // Validate UUID and Date before creating
@@ -148,7 +149,7 @@ public class Patient {
      * @param uuidStr -- UUID in a string format
      * @return true if the UUID matches the correct fotmat hexadecimal pattern
      */
-    public boolean validUUID(String uuidStr) {
+    public static boolean validUUID(String uuidStr) {
         if (uuidStr == null) {
             return false;
         }
@@ -176,6 +177,16 @@ public class Patient {
         } catch (IllegalArgumentException e) {
             return false;
         }
+    }
+
+    /**
+     * this method was added to access the prescriptions list of a patient
+     * 
+     * @return the patient's prescription list
+     */
+    public PrescriptionList getList(PrescriptionList list, Patient pat, Patient[] patArray) {
+        // let's match this patient's identity to our patient to return his list
+        return list.findPatientList(pat, patArray);
     }
 
 }

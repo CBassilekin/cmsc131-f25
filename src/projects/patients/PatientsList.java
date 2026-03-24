@@ -250,6 +250,7 @@ public class PatientsList {
 
                     if (list[mid].getIdentity().match(id)) {
                         return list[mid]; // Patient found
+
                     } else if (list[mid].getIdentity().isLessThan(id)) {
                         left = mid + 1; // Search in the right half
                     } else {
@@ -357,15 +358,13 @@ public class PatientsList {
         Patient newPatientFromFile = null;
         try {
             scanner = new Scanner(patientsFile);
-
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-
                 if (line != null) {
-
                     newPatientFromFile = Patient.makePatient(line);
                     directAdd(newPatientFromFile, list);
-                }
+                } else
+                    throw new IllegalArgumentException(" line must not be null");
             }
             scanner.close();
             mergeSort(list);
@@ -396,6 +395,33 @@ public class PatientsList {
             writer.close();
             return true;
 
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean readPrescriptions(String filepath, PrescriptionList list, Patient[] paList) {
+
+        File prescriptionsFile = new File(filepath);
+        Prescription pr = null;
+        try {
+            scanner = new Scanner(prescriptionsFile);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line != null) {
+                    // creating a new prescription
+                    pr = Prescription.makePrescription(line, paList);
+                    // matching a prescription to a patient, then add it to his/her prescription
+                    // list
+                    Patient pat = binarySearch(pr.getPatientID(pr), paList);
+                    if (pat != null) {
+                        list.add(pr);
+                    }
+                }
+            }
+            scanner.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;

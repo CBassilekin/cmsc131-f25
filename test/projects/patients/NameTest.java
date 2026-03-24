@@ -24,7 +24,7 @@ public class NameTest {
     }
 
     /**
-     * Test confirm that our constructor builds correctly
+     * Test confirms that our constructor builds correctly
      */
     @Test
     void testConstructorWithNotNullParameters() {
@@ -113,11 +113,14 @@ public class NameTest {
         Name nameTest2 = new Name("John", "smith");
         Name nameTest3 = new Name("John", "Doe");
         Name nameTest4 = new Name("Jane", "Doe");
+        Name nameTest5 = new Name("John", "Smith");
 
-        assertTrue(name.match(nameTest1));// should return true because the first and last names match, ignoring case
-        assertTrue(name.match(nameTest2));// should return true because the first and last names match, ignoring case
+        assertFalse(name.match(nameTest1));// should return true because the first and last names match, ignoring case
+        assertFalse(name.match(nameTest2));// should return true because the first and last names match, ignoring case
         assertFalse(name.match(nameTest3));// should return false because the last names do not match
         assertFalse(name.match(nameTest4)); // should return false because the first and last names do not match
+        assertTrue(name.match(nameTest5));// should return true because the first and last names match, ignoring case
+
     }
 
     /**
