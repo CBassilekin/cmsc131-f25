@@ -15,8 +15,7 @@ public class PatientsList {
     private Scanner scanner;
 
     /**
-     * Building the constructot for the PatientsList Class
-     * PatientList is an array of 10000 patients
+     * Building the constructor for the PatientsList Class
      */
 
     public PatientsList() {
@@ -401,31 +400,27 @@ public class PatientsList {
         }
     }
 
-    public boolean readPrescriptions(String filepath, PrescriptionList list, Patient[] paList) {
-
-        File prescriptionsFile = new File(filepath);
-        Prescription pr = null;
-        try {
-            scanner = new Scanner(prescriptionsFile);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line != null) {
-                    // creating a new prescription
-                    pr = Prescription.makePrescription(line, paList);
-                    // matching a prescription to a patient, then add it to his/her prescription
-                    // list
-                    Patient pat = binarySearch(pr.getPatientID(pr), paList);
-                    if (pat != null) {
-                        list.add(pr);
-                    }
-                }
-            }
-            scanner.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+    /*
+     * public boolean prescription2Patient(PrescriptionList list, Patient[] paList)
+     * {
+     * Prescription pr = null;
+     * Patient pa = null;
+     * PrescriptionList patientPrescriptions = new PrescriptionList();
+     * 
+     * if (list == null) {
+     * return false;
+     * }
+     * while (list.next() != null) {
+     * pr = list.next();
+     * for (int i = 0; i < paList.length; i++) {
+     * pa = paList[i];
+     * if (pa.getIdentity().match(pr.getPatientID(pr))) {
+     * patientPrescriptions.add(pr);
+     * }
+     * }
+     * }
+     * return true;
+     * }
+     */
 
 }

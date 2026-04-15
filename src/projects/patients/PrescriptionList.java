@@ -1,9 +1,13 @@
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class PrescriptionList {
 
     private ListRecord head;
     private int iterator;
     ListRecord nextRecord = null;
+    private Scanner scanner;
 
     public PrescriptionList() {
         head = null;
@@ -128,15 +132,52 @@ public class PrescriptionList {
      * 
      * @return localCounter - the total number of prescriptions in a list.
      */
-    public int getCount() {
+    public int getCount(PrescriptionList list) {
         int localCounter = 0;
         while (nextRecord != null) {
             localCounter++;
             nextRecord = nextRecord.next;
 
-        } // when iteration ends, the iteration reset and returns null;
+        } // when iteration ends, the iteration reset and returns the count;
         init();
         return localCounter;
+    }
+
+    public boolean readPrescriptions(String filepath, PrescriptionList list, Patient[] paList) {
+
+        File prescriptionsFile = new File(filepath);
+        Prescription pr = null;
+        try {
+            scanner = new Scanner(prescriptionsFile);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line != null) {
+                    // creating a new prescription
+                    pr = Prescription.makePrescription(line, paList);
+                    // matching a prescription to a patient, then add it to his/her prescription
+                    // list
+                    /*
+                     * Patient pat = binarySearch(pr.getPatientID(pr), paList);
+                     * if (pat != null) {
+                     */
+                    list.add(pr);
+                }
+            }
+
+            scanner.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public PrescriptionList returnList(String filepath, PrescriptionList list, Patient[] paList) {
+        if (readPrescriptions(filepath, list, paList)) {
+            return list;
+        } else {
+            return null;
+        }
     }
 
 }

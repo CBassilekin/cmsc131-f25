@@ -2,7 +2,7 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class PatientIdentity {
+public class PatientIdentity implements Identity {
 
     private Date dob; // date of birth in format YYYY-MM-DD
     private Name name; // full name in format "First Last"
@@ -73,11 +73,13 @@ public class PatientIdentity {
      *         match, false otherwise.
      * 
      */
-    public boolean match(PatientIdentity other) {
+    public boolean match(Identity other) {
         if (other == null) {
             throw new IllegalArgumentException("Other PatientIdentity cannot be null.");
         }
-        return (name.match(other.getName()) && dateFormatter(dob).equals(dateFormatter((other.getDob()))));
+        PatientIdentity otherPatient = (PatientIdentity) other;
+        return (name.match(otherPatient.getName())
+                && dateFormatter(dob).equals(dateFormatter((otherPatient.getDob()))));
     }
 
     /**
@@ -92,12 +94,13 @@ public class PatientIdentity {
      *         based on name and date of birth, false otherwise.
      * 
      */
-    public boolean isLessThan(PatientIdentity other) {
+    public boolean isLessThan(Identity other) {
         if (other == null) {
             throw new IllegalArgumentException("Other PatientIdentity cannot be null.");
         }
+        PatientIdentity otherPatient = (PatientIdentity) other;
         // Returns true if name is less, OR if names match and DOB is earlier
-        return (name.isLessThan(other.name)) || (name.match(other.name) && dob.before(other.dob));
+        return (name.isLessThan(otherPatient.name)) || (name.match(otherPatient.name) && dob.before(otherPatient.dob));
     }
 
     public String identityToString() {

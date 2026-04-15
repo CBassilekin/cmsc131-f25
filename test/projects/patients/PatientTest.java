@@ -322,7 +322,7 @@ public class PatientTest {
         assertNotNull(list);
         list.init();
 
-        assertEquals(1, list.getCount());
+        assertEquals(1, list.getCount(list));
     }
 
 }

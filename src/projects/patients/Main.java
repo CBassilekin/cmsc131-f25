@@ -62,7 +62,7 @@ public class Main {
         prList = new PrescriptionList();
         Patient pat = listArray[0];
         // list.readPrescriptions("data/prescriptions1000.csv", prList, listArray);
-        System.out.println(list.readPrescriptions("data/prescriptions1000.csv", prList, listArray));
+        System.out.println(prList.readPrescriptions("data/prescriptions1000.csv", prList, listArray));
         PrescriptionList patPrList = pat.getList(prList, pat, listArray);
 
         patPrList.init();
@@ -72,8 +72,9 @@ public class Main {
         System.out.println(patPrList.next());
         System.out.println(patPrList.next());
         System.out.println(patPrList.next());
+        patPrList.init();
 
-        System.out.println(patPrList.getCount());
+        System.out.println(patPrList.getCount(patPrList));
 
     }
 }
