@@ -1,5 +1,5 @@
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +17,7 @@ public class PatientIdentityTest {
      * Test default values for the PatientIdentity Class
      */
 
-    @BeforeEach
+    @Before
     public void setUp() {
         name = new Name("John", "Doe");
         cal.set(1990, Calendar.JANUARY, 01); // Year, Month, Day

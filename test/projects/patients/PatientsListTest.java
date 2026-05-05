@@ -1,10 +1,8 @@
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.Assert.assertEquals;
@@ -18,33 +16,35 @@ import java.util.Scanner;
 
 public class PatientsListTest {
 
-    private PatientsList newList;
-    private Patient testList[];
-    private int MAXPATIENTS = 1000;
+    private PatientsList patientsList;
     private Patient patientTest1;
     private Patient patientTest2;
     private Patient patientTest3;
 
     private Calendar cal = Calendar.getInstance();
+    private BinarySearchTree testList;
 
     /**
      * Testing will use all these values as defaukt
      * before each test
      */
 
-    @BeforeEach
+    @Before
     public void setUp() {
 
-        newList = new PatientsList();
-        testList = new Patient[MAXPATIENTS];
+        testList = new BinarySearchTree();
+        patientsList = new PatientsList();
 
-        cal.set(1990, Calendar.JANUARY, 01); // Year, Month, Day
+        cal.set(1990, Calendar.JANUARY, 01, 0, 0, 0); // Year, Month, Day
+        cal.set(Calendar.MILLISECOND, 0);
         patientTest1 = new Patient(new PatientIdentity(
                 new Name("John", "Doe"), cal.getTime()));
-        cal.set(1970, Calendar.MARCH, 01); // Year, Month, Day
+        cal.set(1970, Calendar.MARCH, 01, 0, 0, 0); // Year, Month, Day
+        cal.set(Calendar.MILLISECOND, 0);
         patientTest2 = new Patient(new PatientIdentity(
                 new Name("Jane", "Smith"), cal.getTime()));
-        cal.set(2000, Calendar.MAY, 05); // Year, Month, Day
+        cal.set(2000, Calendar.MAY, 05, 0, 0, 0); // Year, Month, Day
+        cal.set(Calendar.MILLISECOND, 0);
         patientTest3 = new Patient(new PatientIdentity(
                 new Name("Alice", "Johnson"), cal.getTime()));
 
@@ -52,54 +52,26 @@ public class PatientsListTest {
 
     /**
      * Test confirms that the constuctor builds correctly
-     * each patient list should hold 1,000 spaces
-     * should be all empty at the beginning
+     * the tree should be empty at first and the list should be initialized
      * should not be null
      */
     @Test
     public void testValidConstructor() {
-        assertEquals(0, newList.getNumPatients(testList));
-        assertNotNull(testList);
+        assertEquals(0, patientsList.getNumPatients());
+        assertNotNull(patientsList);
     }
 
-    /**
-     * Test confirms that the list effectively holds
-     * 1000 spaces
-     */
     @Test
-    public void testgetSize() {
-        assertEquals(1000, newList.getSize(testList));
-    }
+    public void testConstructorWithExistingList() {
+        // creating a new list with an existing list of patients
 
-    /**
-     * Test confirms that adding patients is successfull
-     * especially in an orderly way
-     * we will not be checking the case where the list is full
-     * because that is not part of this scope
-     */
-    @Test
-    public void testAddPatientInOrder() {
-        // adding patients in random order to be reordered automatically
-        cal.set(1995, Calendar.MARCH, 20);
-        Patient patientTest4 = new Patient(new PatientIdentity(
-                new Name("Bob", "Brown"), cal.getTime()));
-        newList.add(patientTest3, testList);
-        newList.add(patientTest1, testList);
-        newList.add(patientTest4, testList);
-        newList.add(patientTest2, testList);
+        patientsList.add(patientTest1);
+        patientsList.add(patientTest2);
 
-        // checking if the list has added . patients successfully
-        int expectedNumPatients = 4;
-        int actualNumPatients = newList.getNumPatients(testList);
-        assertEquals(expectedNumPatients, actualNumPatients);
-
-        // checking that the item ids are in the correct order
-        Patient space0 = newList.next(testList);
-        assertTrue(space0.getIdentity().isLessThan(patientTest1.getIdentity()));
-        Patient space1 = newList.next(testList);
-        assertTrue(space1.getIdentity().isLessThan(patientTest3.getIdentity()));
-        Patient space2 = newList.next(testList);
-        assertTrue(space2.getIdentity().isLessThan(patientTest2.getIdentity()));
+        // checking that the new list has the same patients as the existing list
+        assertTrue(patientsList.patientExists(patientTest1.getIdentity()));
+        assertTrue(patientsList.patientExists(patientTest2.getIdentity()));
+        assertEquals(2, patientsList.getNumPatients());
     }
 
     /**
@@ -107,37 +79,27 @@ public class PatientsListTest {
      * and check that the size of the list grows accordingly
      */
     @Test
-    public void testAddValidPatient() {
-        boolean actualResult = newList.add(patientTest1, testList);
-        assertTrue(actualResult);
-        int actualNumPatients = newList.getNumPatients(testList);
-        int expectedNumPatients = 1;
-        assertEquals(expectedNumPatients, actualNumPatients);
+    public void testAdd() {
+        patientsList.add(patientTest1);
+        assertTrue(patientsList.patientExists(patientTest1.getIdentity()));
+        assertEquals(1, patientsList.getNumPatients());
 
-        actualResult = newList.add(patientTest2, testList);
-        assertTrue(actualResult);
-        int actualNumPatients2 = newList.getNumPatients(testList);
-        int expectedNumPatients2 = 2;
-        assertEquals(expectedNumPatients2, actualNumPatients2);
+        patientsList.add(patientTest2);
+        assertTrue(patientsList.patientExists(patientTest2.getIdentity()));
+        assertEquals(2, patientsList.getNumPatients());
 
-        actualResult = newList.add(patientTest3, testList);
-        assertTrue(actualResult);
-        int actualNumPatients3 = newList.getNumPatients(testList);
-        int expectedNumPatients3 = 3;
-        assertEquals(expectedNumPatients3, actualNumPatients3);
+        patientsList.add(patientTest3);
+        assertTrue(patientsList.patientExists(patientTest3.getIdentity()));
+        assertEquals(3, patientsList.getNumPatients());
     }
 
     /**
-     * Test checks that a null patient cannot be successfully added to the list
+     * Test confirms that a null patient cannot be successfully added to the list
      */
     @Test
     public void testAddNullPatient() {
-        boolean actualResult = newList.add(null, testList);
-        assertFalse(actualResult);
-
-        int actualNumPatients = newList.getNumPatients(testList);
-        int expectedNumPatients = 0;
-        assertEquals(expectedNumPatients, actualNumPatients);
+        patientsList.add(null);
+        assertEquals(0, patientsList.getNumPatients());
     }
 
     /**
@@ -147,11 +109,32 @@ public class PatientsListTest {
 
     @Test
     public void testAddDuplicatePatient() {
-        newList.add(patientTest1, testList);
-        boolean actualResult = newList.add(patientTest1, testList);
-        Boolean expectedResult = false;
-        assertEquals(expectedResult, actualResult);
-        assertEquals(1, newList.getNumPatients(testList));
+        patientsList.add(patientTest1);
+        assertTrue(patientsList.patientExists(patientTest1.getIdentity()));
+        assertEquals(1, patientsList.getNumPatients());
+
+        // trying to add the same patient again
+        patientsList.add(patientTest1);
+        assertEquals(1, patientsList.getNumPatients());
+    }
+
+    /**
+     * Test checks the total number of existing patients in the list.
+     */
+    @Test
+    public void testGetNumPatients() {
+        // initially the list should be empty
+        assertEquals(0, patientsList.getNumPatients());
+
+        // adding patients and checking the count
+        patientsList.add(patientTest1);
+        assertEquals(1, patientsList.getNumPatients());
+
+        patientsList.add(patientTest2);
+        assertEquals(2, patientsList.getNumPatients());
+
+        patientsList.add(patientTest3);
+        assertEquals(3, patientsList.getNumPatients());
     }
 
     /**
@@ -159,16 +142,16 @@ public class PatientsListTest {
      */
     @Test
     public void testPatientExistsReturnsTrue() {
-        newList.add(patientTest1, testList);
-        newList.add(patientTest2, testList);
+        patientsList.add(patientTest1);
+        patientsList.add(patientTest2);
 
         // checking if existing patient is found
-        boolean actualResult = newList.patientExists(patientTest1.getIdentity(), testList);
-        Boolean expectedResult = true;
+        boolean actualResult = patientsList.patientExists(patientTest1.getIdentity());
+        boolean expectedResult = true;
         assertEquals(expectedResult, actualResult);
 
         // checking if another existing patient is found
-        actualResult = newList.patientExists(patientTest2.getIdentity(), testList);
+        actualResult = patientsList.patientExists(patientTest2.getIdentity());
         expectedResult = true;
         assertEquals(expectedResult, actualResult);
     }
@@ -179,39 +162,23 @@ public class PatientsListTest {
      */
     @Test
     public void testPatientExistsReturnsFalse() {
-        newList.add(patientTest1, testList);
-
-        // checking if non-existing patient is not found
+        // checking if a non-existing patient is not found
         cal.set(1995, Calendar.MARCH, 20);
-        Patient nonExistingId = new Patient(new PatientIdentity(
-                new Name("Non", "Existing"), cal.getTime()));
-        boolean actualResult = newList.patientExists(nonExistingId.getIdentity(), testList);
+        PatientIdentity nonExistingId = new PatientIdentity(
+                new Name("Non", "Existing"), cal.getTime());
+        boolean actualResult = patientsList.patientExists(nonExistingId);
         boolean expectedResult = false;
         assertEquals(expectedResult, actualResult);
     }
 
     /**
-     * Test checks the total number of existing patients in the list.
+     * Test patientExists() with a null patient identity should return false
      */
     @Test
-    public void testNumberOfPatients() {
-        // initially the list should be empty
-        int actualNumPatients = newList.getNumPatients(testList);
-        int expectedNumPatients = 0;
-        assertEquals(expectedNumPatients, actualNumPatients);
-
-        // adding patients and checking the count
-        newList.add(patientTest1, testList);
-        newList.add(patientTest2, testList);
-        actualNumPatients = newList.getNumPatients(testList);
-        expectedNumPatients = 2;
-        assertEquals(expectedNumPatients, actualNumPatients);
-
-        // adding another patient and checking the count again
-        newList.add(patientTest3, testList);
-        actualNumPatients = newList.getNumPatients(testList);
-        expectedNumPatients = 3;
-        assertEquals(expectedNumPatients, actualNumPatients);
+    public void testPatientExistsWithNullIdentity() {
+        boolean actualResult = patientsList.patientExists(null);
+        boolean expectedResult = false;
+        assertEquals(expectedResult, actualResult);
     }
 
     /**
@@ -221,69 +188,102 @@ public class PatientsListTest {
     @Test
     public void testFindReturnsNull() {
         // trying to find a patient with a null identity
-        assertNull(newList.find(null, testList));
+        Patient actualResult = patientsList.find(null);
+        assertNull(actualResult);
 
-        // trying to find a non-existing patient by ID
+        // trying to find a non-existing patient
         cal.set(1995, Calendar.MARCH, 20);
         PatientIdentity nonExistingId = new PatientIdentity(
                 new Name("Non", "Existing"), cal.getTime());
-        Patient actualPatient = newList.find(nonExistingId, testList);
-        assertNull(actualPatient);
+        actualResult = patientsList.find(nonExistingId);
+        assertNull(actualResult);
+
     }
 
     /**
-     * Test confirm that finding an existing patient
+     * Test confirms that finding an existing patient
      * can be easily returned using the find() method
      */
     @Test
     public void testFindPatientById() {
-        newList.add(patientTest1, testList);
-        newList.add(patientTest2, testList);
+        patientsList.add(patientTest1);
+        patientsList.add(patientTest2);
 
-        // finding an existing patient by ID
-        Patient actualPatient = newList.find(patientTest1.getIdentity(), testList);
-        Patient expectedPatient = patientTest1;
-        assertEquals(expectedPatient, actualPatient);
+        // trying to find an existing patient
+        Patient actualResult = patientsList.find(patientTest1.getIdentity());
+        Patient expectedResult = patientTest1;
+        assertEquals(expectedResult, actualResult);
 
-        // finding another existing patient by ID
-        actualPatient = newList.find(patientTest2.getIdentity(), testList);
-        expectedPatient = patientTest2;
-        assertEquals(expectedPatient, actualPatient);
-
+        // trying to find another existing patient
+        actualResult = patientsList.find(patientTest2.getIdentity());
+        expectedResult = patientTest2;
+        assertEquals(expectedResult, actualResult);
     }
 
     /**
-     * Test confirm that the iterator is correctly initialized at -1.
+     * Test confirms that the iterator is correctly initialized at -1.
      */
     @Test
     public void testInitIterator() {
 
-        // checking if the iterator is set to the start at -1
-        int expectedIndex = -1;
-        newList.initIterator();
-        int actualIndex = newList.indexOfIteration();
+        // initializing the iterator
+        patientsList.initIterator();
+
+        // checking that the index of iteration is set to -1
+        int expectedIndex = 0;
+        int actualIndex = patientsList.indexOfIteration();
         assertEquals(expectedIndex, actualIndex);
+
     }
 
     /**
-     * Test confirms that an empty array is initialized at -1
-     * next() should return null
+     * Test confirms that the index of Iteration is reported correctly each time
+     */
+    @Test
+    public void testIndexOfIteration() {
+        // adding patients to the list
+        patientsList.add(patientTest1);
+        patientsList.add(patientTest2);
+        patientsList.add(patientTest3);
+
+        // initializing the iterator
+        patientsList.initIterator();
+
+        // checking the index of iteration after each call to next()
+        assertEquals(0, patientsList.indexOfIteration());
+        patientsList.next();
+        assertEquals(1, patientsList.indexOfIteration());
+        patientsList.next();
+        assertEquals(2, patientsList.indexOfIteration());
+        patientsList.next();
+        assertEquals(3, patientsList.indexOfIteration());
+
+    }
+
+    /**
+     * Test confirms that an empty patients list will retuen nulll
+     * when next() is called on it
      */
     @Test
     public void testNextAnEmptyArray() {
-        assertNull(newList.next(testList));
-        assertEquals(-1, newList.indexOfIteration());
+        // the list is empty
+        patientsList.next();
+        assertNull(patientsList.next());
+        assertEquals(0, patientsList.indexOfIteration());
+
     }
 
     /**
-     * For a Null patient in the lits,
-     * next() returns a null patient
+     * For a Null patient in the list, test confirms that calling next()
+     * will return a null patient
+     * 
      */
     @Test
     public void testNextWhilePatientIsNull() {
-        // the list is empty
-        newList.next(testList);
-        assertNull(newList.next(testList));
+        patientsList.add(null);
+        patientsList.initIterator();
+        assertNull(patientsList.next());
+        assertEquals(0, patientsList.indexOfIteration());
 
     }
 
@@ -294,163 +294,83 @@ public class PatientsListTest {
     @Test
     public void testNextAfterRepeatedCalls() {
 
-        // adding objects to the list
-        newList.add(patientTest1, testList);
-        newList.add(patientTest2, testList);
+        // adding patients to the list
+        patientsList.add(patientTest1);
+        patientsList.add(patientTest2);
+        patientsList.add(patientTest3);
 
-        // checking to see that the iterators change correctly
-        Patient nextPatient1 = newList.next(testList);
-        assertTrue(patientTest1.getIdentity().match(nextPatient1.getIdentity()));
-        assertEquals(0, newList.indexOfIteration());
+        // initializing the iterator
+        patientsList.initIterator();
 
-        Patient nextPatient2 = newList.next(testList);
-        assertTrue(patientTest2.getIdentity().match(nextPatient2.getIdentity()));
-        assertEquals(1, newList.indexOfIteration());
+        // calling next() repeatedly and checking the returned patient each time
+        Patient actualResult = patientsList.next();
+        Patient expectedResult = patientTest1;
+        assertEquals(expectedResult, actualResult);
 
+        actualResult = patientsList.next();
+        expectedResult = patientTest3;
+        assertEquals(expectedResult, actualResult);
+
+        actualResult = patientsList.next();
+        expectedResult = patientTest2;
+        assertEquals(expectedResult, actualResult);
     }
 
     /**
-     * Test confirms that the index of Iteration is reported correctly each time
+     * Test confirms that importing from an inexistent file will fail and return
+     * false
+     * and the number of patients in the list should remain 0
      */
-    @Test
-    public void testIndexOfIteration() {
-
-        // initializing the iterator
-        newList.initIterator();
-
-        // checking the index of the iterator at the start
-        int expectedIndex = -1;
-        int actualIndex = newList.indexOfIteration();
-        assertEquals(expectedIndex, actualIndex);
-
-        // Adding patients to the list
-        newList.add(patientTest1, testList);
-        newList.add(patientTest2, testList);
-        newList.add(patientTest3, testList);
-
-        // moving the iterator to the first patient and checking the index
-        newList.next(testList);
-        expectedIndex = 0;
-        actualIndex = newList.indexOfIteration();
-        assertEquals(expectedIndex, actualIndex);
-
-        // moving the iterator to the next patient and checking the index again
-        newList.next(testList);
-        expectedIndex = 1;
-        actualIndex = newList.indexOfIteration();
-        assertEquals(expectedIndex, actualIndex);
-
-        // moving the iterator to the next patient and checking the index again
-        newList.next(testList);
-        expectedIndex = 2;
-        actualIndex = newList.indexOfIteration();
-        assertEquals(expectedIndex, actualIndex);
-
-        // moving the iterator beyond the last patient and checking the index resets to
-        // -1
-
-        newList.next(testList);
-        expectedIndex = -1;
-        actualIndex = newList.indexOfIteration();
-        assertEquals(expectedIndex, actualIndex);
-    }
-
-    @Test
-    public void testDirectAdd() {
-        // a null patient is passed to the method
-        assertFalse(newList.directAdd(null, testList));
-
-        // a pattient add operation is successful
-        assertTrue(newList.directAdd(patientTest1, testList));
-        newList.next(testList);
-        assertEquals(0, newList.indexOfIteration());
-
-    }
-
-    @Test
-    public void testMergeSort() {
-
-        // when passing a null list of patients to the method
-
-        assertFalse(PatientsList.mergeSort(null));
-
-        // when a list has 1 item
-        Patient[] list = { patientTest1 };
-        assertTrue(PatientsList.mergeSort(list));
-
-        // lets add the other 2 patients and sort all
-        list = new Patient[] { patientTest1, patientTest2, patientTest3 };
-
-        assertTrue(PatientsList.mergeSort(list));
-        assertEquals(patientTest1, list[0]);// First element should be patient1
-        assertEquals(patientTest3, list[1]);// Second element should patient3
-        assertEquals(patientTest2, list[2]);// last element should be patient2
-
-        // now testing that mergeSort is maintained
-        // lets try mergeSort again on an already sorted list
-        // the result should be the same as above.
-
-        assertTrue(PatientsList.mergeSort(list));
-        assertEquals(patientTest1, list[0]);// First element should be patient1
-        assertEquals(patientTest3, list[1]);// Second element should patient3
-        assertEquals(patientTest2, list[2]);// last element should be patient2
-
-    }
-
     @Test
     public void testImportFromAnInexistentFile() {
 
         // if the file is inexistent, method should return false
-        assertFalse(newList.importFromFile("data/inexistent.csv", testList));
-        assertEquals(0, newList.getNumPatients(testList));
+        assertFalse(patientsList.importFromFile("data/inexistentFile.csv"));
     }
 
+    /**
+     * Test confirms that importing from a correct and valid file will succeed
+     * and the number of patients in the list should be updated
+     */
     @Test
     public void testImportFromACorrectAndaValidFile() {
 
         // this is a perfect file with 1000 patients which should be import successfully
-        assertTrue(newList.importFromFile("data/testInput.csv", testList));
-        assertEquals(1000, newList.getNumPatients(testList));
+        assertTrue(patientsList.importFromFile("data/testInput.csv"));
+        assertEquals(1000, patientsList.getNumPatients());
 
-        // let's find() a known patient from the file in the list of patients
-        // We will use line =
-        // Barbara,Alvarez,1927-10-04,29eea220-dc3f-4a18-87b6-fba2b4d989b0
-
-        Patient actualResult = newList.find(testList[0].getIdentity(), testList);
-        Patient expectedResult = testList[0];
-        assertEquals(expectedResult, actualResult);
     }
 
+    /**
+     * Test confirms that importing from a file with an empty line will still be
+     * imported
+     * returning true since the file is still valid and the empty line will be
+     * gracefully caught
+     * and the number of patients in the list should remain 1000
+     */
     @Test
     public void testImportFromAFileWithAnEmptyLine() {
 
-        // this file has an empty line that will not be imported
-        // that particular line could not create a patient and
-        // should throuw an error
-        Exception exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    newList.importFromFile("data/testInputwithEmptyLine.csv", testList);
-                });
-        assertEquals("Insufficient information to create a patient",
-                exception.getMessage());
+        // this file has an empty line that our importFile() will
+        // gracefully catch and the file will still be imported successfuly
 
-        // However the rest of the file should not proceed successfully
-        // assertTrue(newList.importFromFile("data/testInputwithEmptyLine.csv"));
-        assertFalse(newList.importFromFile("data/testInputwithEmptyLine", testList));
-        assertEquals(0, newList.getNumPatients(testList));
+        assertTrue(patientsList.importFromFile("data/testInputwithEmptyLine.csv"));
+        assertEquals(999, patientsList.getNumPatients());
     }
 
+    /**
+     * Test confirms that saving to a correct and valid file will succeed
+     */
     @Test
     public void testSaveToFileIsSuccessful() {
         // loading to list
-        newList.importFromFile("data/testInput.csv", testList);
+        patientsList.importFromFile("data/testInput.csv");
 
         // save this version to a new file
         int lineNumber = 0;
         int emptyFileLineNumber = 0;
 
-        newList.saveToFile("data/testOutput.csv", testList);
+        patientsList.saveToFile("data/testOutput.csv");
         try {
             File file = new File("data/testOutput.csv");
             Scanner scanner = new Scanner(file);
@@ -486,25 +406,28 @@ public class PatientsListTest {
         // the second file should have none.
 
         assertEquals(1000, lineNumber);
-        assertTrue(newList.saveToFile("data/testOutput.csv", testList));
+        assertTrue(patientsList.saveToFile("data/testOutput.csv"));
         assertEquals(0, emptyFileLineNumber);
         assertNotEquals(lineNumber, emptyFileLineNumber);
 
     }
 
+    /**
+     * Test confirms that saving to a null file or an inexistent file will fail and
+     * return false
+     */
     @Test
     public void testSaveToFileFailed() {
 
         // Loading up the data
-        newList.importFromFile("data/testInput.csv", testList);
+        patientsList.importFromFile("data/testInput.csv");
 
         // Trying to save to a null file should fail
-        assertFalse(newList.saveToFile(null, testList));
+        assertFalse(patientsList.saveToFile(null));
 
         // Trying to save to an incorrect extension file should fail
-        assertFalse(newList.saveToFile("date/inexistentFilepath.csv", testList));
+        assertFalse(patientsList.saveToFile("/this_folder_does_not_exist/test.csv"));
 
     }
 
-   
 }

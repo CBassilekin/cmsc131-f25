@@ -1,14 +1,10 @@
-
+import org.junit.Before;
+import org.junit.Test;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.Assert.assertEquals;
 
 public class PrescriptionTest {
     private Prescription pr = null;
@@ -16,14 +12,14 @@ public class PrescriptionTest {
     private String medName;
     private String prescriber;
     private int dosage;
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    private Patient[] list;
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private PatientsList list = new PatientsList();
 
     /**
      * this method set up the test prescription for all tests
      */
-    @BeforeEach
-    void SetUP() {
+    @Before
+    public void SetUP() {
 
         Calendar cal = Calendar.getInstance();
         cal.set(2022, Calendar.AUGUST, 04);
@@ -40,7 +36,7 @@ public class PrescriptionTest {
      * when invalid input are passed onto it.
      */
     @Test
-    void testConstructorThrowsOnInvalidInputs() {
+    public void testConstructorThrowsOnInvalidInputs() {
         // should throw an IllegalArgumentException when the first name is null
         Exception e1 = assertThrows(
                 IllegalArgumentException.class,
@@ -77,7 +73,7 @@ public class PrescriptionTest {
      * it successfully creates a prescription.
      */
     @Test
-    void testConstructorBuidsUpCorrectly() {
+    public void testConstructorBuidsUpCorrectly() {
         assertNotNull(medName);
         assertNotNull(prescriber);
         assertNotNull(issue);
@@ -89,7 +85,7 @@ public class PrescriptionTest {
      * test verfies that getDatee returns the correct value.
      */
     @Test
-    void testgetDateReturnsCorrectOutput() {
+    public void testgetDateReturnsCorrectOutput() {
         assertNotNull(pr.getDate());
 
         Date expectedResult = issue;
@@ -101,7 +97,7 @@ public class PrescriptionTest {
      * test verfies that getName() returns the correct value.
      */
     @Test
-    void testgetNameReturnsCorrectOutput() {
+    public void testgetNameReturnsCorrectOutput() {
         assertNotNull(pr.getName());
 
         String expectedResult = medName;
@@ -113,7 +109,7 @@ public class PrescriptionTest {
      * test verfies that getPrescriber() returns the correct value.
      */
     @Test
-    void testgetPrescriberReturnsCorrectOutput() {
+    public void testgetPrescriberReturnsCorrectOutput() {
         assertNotNull(pr.getPrescriber());
 
         String expectedResult = prescriber;
@@ -125,7 +121,7 @@ public class PrescriptionTest {
      * test verfies that getDosage() returns the correct value.
      */
     @Test
-    void testgetDosageReturnsCorrectOutput() {
+    public void testgetDosageReturnsCorrectOutput() {
         assertNotNull(pr.getDosage());
 
         int expectedResult = dosage;
@@ -138,12 +134,15 @@ public class PrescriptionTest {
      * the intergrity of a patient's data.
      */
     @Test
-    void testMakePrescriptionPreservesData() {
+    public void testMakePrescriptionPreservesData() {
 
         Calendar Cal = Calendar.getInstance();
-        Cal.set(1953, Calendar.JUNE, 16);
+        Cal.set(1953, Calendar.JUNE, 16, 0, 0, 0);
+        Cal.set(Calendar.MILLISECOND, 0);
         Date dob = Cal.getTime();
-        list = new Patient[] { new Patient(new PatientIdentity(new Name("Maria", "Smith"), dob)) };
+        list.add(
+                new Patient(new PatientIdentity(
+                        new Name("Maria", "Smith"), dob)));
 
         Prescription justManufactured = Prescription.makePrescription(
                 "Smith,Maria,1953-06-16,benzozine,2022-08-04,50,Miller", list);
@@ -168,7 +167,7 @@ public class PrescriptionTest {
      * thrown when a null line is passed to makePrescription().
      */
     @Test
-    void testMakePrescriptionThrowsOnNullLine() {
+    public void testMakePrescriptionThrowsOnNullLine() {
         Exception e = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -183,7 +182,7 @@ public class PrescriptionTest {
      * when it is missing some information on the patient
      */
     @Test
-    void testMakePrescriptionThrowsOnInsufficientInput() {
+    public void testMakePrescriptionThrowsOnInsufficientInput() {
 
         // only 6 inputs are entered
         Exception e = assertThrows(
@@ -211,30 +210,31 @@ public class PrescriptionTest {
      * for an individual and store it adequately.
      */
     @Test
-    void testmatchPatientFromListRetrunsTrue() {
+    public void testmatchPatientFromListReturnsTrue() {
         Calendar Cal = Calendar.getInstance();
         Cal.set(1953, Calendar.JUNE, 16);
         Date dob = Cal.getTime();
-        list = new Patient[] { new Patient(new PatientIdentity(new Name("Maria", "Smith"), dob)) };
+
+        list.add(new Patient(new PatientIdentity(new Name("Maria", "Smith"), dob)));
 
         Prescription justManufactured = Prescription.makePrescription(
                 "Smith,Maria,1953-06-16,benzozine,2022-08-04,50,Miller", list);
 
-        assertTrue(justManufactured.matchPatientFromList(justManufactured, list));
+        assertTrue(justManufactured.matchPatientFromList(list, justManufactured));
 
     }
 
     @Test
-    void testmatchPatientFromListRetrunsFalse() {
+    public void testmatchPatientFromListRetunsFalse() {
         Calendar Cal = Calendar.getInstance();
         Cal.set(1953, Calendar.JUNE, 16);
         Date dob = Cal.getTime();
 
-        list = new Patient[] { new Patient(new PatientIdentity(new Name("Nicole", "Smith"), dob)) };
+        list.add(new Patient(new PatientIdentity(new Name("Nicole", "Smith"), dob)));
         Prescription justManufactured = Prescription.makePrescription(
                 "Smith,Maria,1953-06-16,benzozine,2022-08-04,50,Miller", list);
 
-        assertFalse(justManufactured.matchPatientFromList(justManufactured, list));
+        assertFalse(justManufactured.matchPatientFromList(list, justManufactured));
 
     }
 }

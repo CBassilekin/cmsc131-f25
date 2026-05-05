@@ -6,13 +6,22 @@ public class PrescriptionList {
 
     private ListRecord head;
     private int iterator;
-    ListRecord nextRecord = null;
-    private Scanner scanner;
+    private ListRecord nextRecord = null;
 
+    /**
+     * This is the constructor for the PrescriptionList class. 
+     * It initializes an empty list by setting the head of the list to null and the iterator index to zero.
+     */
     public PrescriptionList() {
         head = null;
+        iterator = 0;
     }
 
+    /**
+     * This is a private inner class that represents a record in the linked list of prescriptions.
+     * Each ListRecord contains a Prescription object (data) and a reference to the next List
+     * Record in the list (next). The constructor initializes the data with the given Prescription and sets the next reference to null.
+     */
     private class ListRecord {
         public Prescription data;
         public ListRecord next;
@@ -23,161 +32,169 @@ public class PrescriptionList {
         }
     }
 
-    // Adds a new prescription to the end of the list
+    /**
+     * This method adds a new prescription to the list in the correct order based on the date and name of the medication.
+     * The method first checks if the new prescription is null and returns false if it is.
+     * If the list is empty, the new prescription becomes the head of the list. If the new prescription should come before the current head, 
+     * it is inserted at the beginning of the list. Otherwise, the method traverses the list to find the correct position for 
+     * the new prescription and inserts it there.
+     * @param pr - the Prescription to be added to the list
+     * @return true if the prescription was successfully added, false if the input prescription is null 
+     */
     public boolean add(Prescription pr) {
-        ListRecord pNew = new ListRecord(pr); // new record to be added to the list
+        if (pr == null)
+            return false;
+        ListRecord pNew = new ListRecord(pr);
 
-        // 1. List is empty
         if (head == null) {
             head = pNew;
-
-        }
-        // 2. PNew should be the new head
-        else if (comesAfter(pNew.data, head.data)) {
+        } else if (comesAfter(pNew.data, head.data)) {
             pNew.next = head;
             head = pNew;
-        }
-        // 3. We traverse to find the insertion point
-        else {
-            // identifying pBefore and pAfter
+        } else {
             ListRecord pBefore = head;
             ListRecord pAfter = head.next;
             while ((pAfter != null) && (!comesAfter(pNew.data, pAfter.data))) {
                 pBefore = pAfter;
                 pAfter = pAfter.next;
             }
-            // insert the new record to the list
-            // Now pNew correctly sits BETWEEN pBefore and pAfter
             pNew.next = pAfter;
             pBefore.next = pNew;
         }
-
         return true;
-
-    }
-
-    public int iteratorIndex() {
-        // we will return the current index of the record being iterated on.
-        return iterator;
-    }
-
-    public void init() {
-        // we reset the iteration to the beginning of the list
-        iterator = 0;
-        nextRecord = head;
-
     }
 
     /**
-     * this method iterates over the list of records,
-     * and return the prescriotion of a visited recorded
-     * 
-     * @return currentPrescription - the exact prescription at a soecific location
-     *         in the list
+     * This method initializes the iterator for the prescription list,
+     *  setting it to the starting position (the head of the list) and resetting the iterator index to zero.
+     * After calling this method, the next() method will return the first prescription in the list on its next call.
      */
-    public Prescription next() {
-        ListRecord visitedRecord = null;
-        Prescription currentPrescription = null;
-
-        while (nextRecord != null) {
-            visitedRecord = nextRecord;
-            nextRecord = nextRecord.next;
-            iterator++;
-            currentPrescription = visitedRecord.data;
-            return currentPrescription;
-        } // when iteration ends, the iteration reset and returns null;
-        init();
-        return null;
-
+    public void init() {
+        iterator = 0;
+        nextRecord = head;
     }
 
-    public PrescriptionList findPatientList(Patient pat, Patient[] listArray) {
-        ListRecord assignRecord = head;
-        /*
-         * Name Name = (assignRecord.data.getPatientFromPrescription().getName());
-         * 
-         * 
-         * Name patName = pat.getIdentity().getName();
-         */PrescriptionList assigned = new PrescriptionList();
-        // traverse through all the record, we could also use the iterator here
-        while (assignRecord != null) {
+    /**
+     * This method returns the current position of the iterator, 
+     * which indicates how many prescriptions have been returned so far by the next() method.
+     * @return the current index of the iterator, representing the number of prescriptions returned so far
+     */
+    public int iteratorIndex() {
+        return iterator;
+    }
 
-            if (assignRecord.data.getPatientID(assignRecord.data).match(pat.getIdentity())) {
+/**
+ * This method returns the next prescription in the list based on the current position of the iterator.
+ * If there are no more prescriptions to return (i.e., the end of the list is
+ * reached), it returns null. The method does not reset the iterator; 
+ * it simply returns the next prescription and advances the iterator for the next call.  
+ * @return the next Prescription in the list, or null if there are no more prescriptions to return
+ */
+    public Prescription next() {
+        if (nextRecord == null) {
+            return null; // Don't reset 'iterator' here; let init() do it.
+        }
+        Prescription currentData = nextRecord.data;
+        nextRecord = nextRecord.next;
+        iterator++;
+        return currentData;
+    }
 
-                assigned.add(assignRecord.data);
+    /**
+     * This method counts the number of prescriptions in the list by traversing it 
+     * from the head to the end, incrementing a counter for each record encountered
+     *  It returns the total count of prescriptions in the list.
+     * @return the total number of prescriptions in the list
+     * 
+     */
+    public int getCount() {
+        int count = 0;
+        ListRecord current = head; // Use a local pointer to traverse the list
+        while (current != null) {
+            count++;
+            current = current.next;
+        }
+        return count;
+    }
+
+    /**
+     * This method returns a list of prescriptions assigned to a specific patient.
+     * It iterates through the prescription list and checks if each prescription's patient ID 
+     * matches the given patient's identity. If a match is found, the prescription is a
+     * dded to the assigned list, which is returned at the end.
+     * @param pat - the patient for whom we want to find the assigned prescriptions
+     * @return a PrescriptionList containing all prescriptions assigned to the given patient
+     * 
+     */
+    public PrescriptionList findPatientList(Patient pat) {
+        PrescriptionList assigned = new PrescriptionList();
+        if (pat == null)
+            return assigned;
+
+        ListRecord current = head;
+        while (current != null) {
+            if (current.data.getPatientID(current.data) != null &&
+                    current.data.getPatientID(current.data).match(pat.getIdentity())) {
+                assigned.add(current.data);
             }
-
-            assignRecord = assignRecord.next;
-
+            current = current.next;
         }
         return assigned;
     }
 
+    /**
+     * Determines the order of prescriptions based on their date and name.
+     * Returns true if 'newRecord' should come after 'current' in the list, false otherwise.
+     * If the dates are different, the one with the later date comes first. If the dates are the same, the one with the lexicographically smaller name comes first.
+     * 
+     * @param newRecord - the new prescription to be compared
+     * @param current - the current prescription in the list to compare against
+     * @return true if 'newRecord' should come after 'current', false otherwise
+     * 
+     */
     public static boolean comesAfter(Prescription newRecord, Prescription current) {
-        // where records have distincts prescription date
+        if (newRecord.getDate() == null || current.getDate() == null)
+            return false;
+
         if (!newRecord.getDate().equals(current.getDate())) {
+
             return (newRecord.getDate().after(current.getDate()));
-
-            // if records have the same prescription date
         } else {
-            // let's organize them by medication name.
-            int comp = newRecord.getName().compareTo(current.getName());
-            return (comp < 0);
+            return (newRecord.getName().compareTo(current.getName()) < 0);
         }
-
     }
 
     /**
-     * this method counts the prescriptions in a given list.
+     * This methods reads a prescriptions from a file
+     * insert valid ones into a patientList which used a binary search tree structure
      * 
-     * @return localCounter - the total number of prescriptions in a list.
+     * @throws IllegalArgumentException if the line doesn't contain enough information to create a prescription
+     * 
+     * the line should be in the format: "lastName, firstName, DOB, medicineName, dateOfIssue, dosage, prescriber"
+     * DOB and dateOfIssue should be in the format "yyyy-MM-dd"
+     * the method will ignore any line that doesn't match the expected format or contains invalid data, and it will continue processing the rest of the file.
+     * 
+     * @param filepath - the string name of the file to be read
+     * @param paList - the list of patients to which the prescriptions will be added
+     * 
+     * @return true if the method succeed
+     * false otherwise
+     *
      */
-    public int getCount(PrescriptionList list) {
-        int localCounter = 0;
-        while (nextRecord != null) {
-            localCounter++;
-            nextRecord = nextRecord.next;
-
-        } // when iteration ends, the iteration reset and returns the count;
-        init();
-        return localCounter;
-    }
-
-    public boolean readPrescriptions(String filepath, PrescriptionList list, Patient[] paList) {
-
-        File prescriptionsFile = new File(filepath);
-        Prescription pr = null;
-        try {
-            scanner = new Scanner(prescriptionsFile);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line != null) {
-                    // creating a new prescription
-                    pr = Prescription.makePrescription(line, paList);
-                    // matching a prescription to a patient, then add it to his/her prescription
-                    // list
-                    /*
-                     * Patient pat = binarySearch(pr.getPatientID(pr), paList);
-                     * if (pat != null) {
-                     */
-                    list.add(pr);
+    public boolean readPrescriptions(String filepath, PatientsList paList) {
+        File file = new File(filepath);
+        try (Scanner sc = new Scanner(file)) {
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                if (line != null && !line.trim().isEmpty()) {
+                    Prescription pr = Prescription.makePrescription(line, paList);
+                    if (pr != null)
+                        this.add(pr);
                 }
             }
-
-            scanner.close();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
             return false;
         }
     }
-
-    public PrescriptionList returnList(String filepath, PrescriptionList list, Patient[] paList) {
-        if (readPrescriptions(filepath, list, paList)) {
-            return list;
-        } else {
-            return null;
-        }
-    }
-
 }

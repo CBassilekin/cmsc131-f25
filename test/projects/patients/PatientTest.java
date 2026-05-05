@@ -1,6 +1,5 @@
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
+import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -26,10 +25,11 @@ public class PatientTest {
      * Testing default values
      */
 
-    @BeforeEach
+    @Before
     public void setUp() {
         name = new Name("John", "Doe");
-        cal.set(1990, Calendar.JANUARY, 01); // Year, Month, Day
+        cal.set(1990, Calendar.JANUARY, 01, 0, 0, 0); // Year, Month, Day
+        cal.set(Calendar.MILLISECOND, 0);
         dob = cal.getTime();
         list = new PrescriptionList();
 
@@ -173,7 +173,7 @@ public class PatientTest {
      * when a null argument string is passed.
      */
     @Test
-    void testMakePatientThrowsOnInsufficientData() {
+    public void testMakePatientThrowsOnInsufficientData() {
         Exception exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -185,7 +185,7 @@ public class PatientTest {
     }
 
     @Test
-    void testMakePatientThrowsOnInvalidDate() {
+    public void testMakePatientThrowsOnInvalidDate() {
 
         /// date does not exist in the calendar
         Exception exception = assertThrows(
@@ -209,7 +209,7 @@ public class PatientTest {
     }
 
     @Test
-    void testMakePatientThrowsOnInvalidUUID() {
+    public void testMakePatientThrowsOnInvalidUUID() {
 
         // insufficient digit
         Exception exception = assertThrows(
@@ -237,7 +237,7 @@ public class PatientTest {
      * when a null argument string is passed.
      */
     @Test
-    void testMakePatientThrowsOnNullInput() {
+    public void testMakePatientThrowsOnNullInput() {
         Exception exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -252,7 +252,7 @@ public class PatientTest {
      * Test confirms that make preserves a given account data during the factory.
      */
     @Test
-    void testMakePatientPreservesData() {
+    public void testMakePatientPreservesData() {
         patientUUID = patient.setUUID();
         Patient madePatient = Patient.makePatient(
                 "Doe,John,1990-01-01," + patientUUID.toString());
@@ -322,7 +322,7 @@ public class PatientTest {
         assertNotNull(list);
         list.init();
 
-        assertEquals(1, list.getCount(list));
+        assertEquals(1, list.getCount());
     }
 
 }

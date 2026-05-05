@@ -1,9 +1,10 @@
-
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertFalse;
 
 public class NameTest {
 
@@ -17,8 +18,8 @@ public class NameTest {
      * for testing the getFirstName() and getLastName() methods.
      * 
      */
-    @BeforeEach
-    void setupName() {
+    @Before
+    public void setupName() {
         first = "John";
         last = "Smith";
     }
@@ -27,7 +28,7 @@ public class NameTest {
      * Test confirms that our constructor builds correctly
      */
     @Test
-    void testConstructorWithNotNullParameters() {
+    public void testConstructorWithNotNullParameters() {
         name = new Name(first, last);
 
         // should create a Name object with the given first and last name
@@ -47,7 +48,7 @@ public class NameTest {
      * 
      */
     @Test
-    void testConstructorWithNullParameters() {
+    public void testConstructorWithNullParameters() {
 
         // should throw an IllegalArgumentException when the first name is null
         Exception e1 = assertThrows(
@@ -81,7 +82,7 @@ public class NameTest {
      * 
      */
     @Test
-    void testGetFirstName() {
+    public void testGetFirstName() {
         name = new Name(first, last);
         String expectedFirstName = "John";
         String actualFirstName = name.getFirstName();
@@ -94,7 +95,7 @@ public class NameTest {
      * patient.
      */
     @Test
-    void testGetLastName() {
+    public void testGetLastName() {
         name = new Name(first, last);
         String expectedLastName = "Smith";
         String actualLastname = name.getLastName();
@@ -106,7 +107,7 @@ public class NameTest {
      * Test checks that two names match regardless of capitalization
      */
     @Test
-    void testMatchReturnsTrueOrFalse() {
+    public void testMatchReturnsTrueOrFalse() {
         name = new Name(first, last);
 
         Name nameTest1 = new Name("john", "Smith");
@@ -120,7 +121,6 @@ public class NameTest {
         assertFalse(name.match(nameTest3));// should return false because the last names do not match
         assertFalse(name.match(nameTest4)); // should return false because the first and last names do not match
         assertTrue(name.match(nameTest5));// should return true because the first and last names match, ignoring case
-
     }
 
     /**
@@ -130,7 +130,7 @@ public class NameTest {
      * 
      */
     @Test
-    void testMatchWithNullName() {
+    public void testMatchWithNullName() {
         name = new Name(first, last);
 
         Exception e = assertThrows(
@@ -148,7 +148,7 @@ public class NameTest {
      * 
      */
     @Test
-    void testIsLessThanReturnsTrueOrFalse() {
+    public void testIsLessThanReturnsTrueOrFalse() {
         name = new Name(first, last);
         Name nameTest1 = new Name("Jane", "smith");
         Name nameTest2 = new Name("John", "Doe");
@@ -168,7 +168,7 @@ public class NameTest {
      * 
      */
     @Test
-    void testIsLessThanWithNull() {
+    public void testIsLessThanWithNull() {
 
         // we can't have a null Name object to compare with,
         // so we expect an IllegalArgumentException to be thrown
@@ -187,12 +187,11 @@ public class NameTest {
      * object in the format "firstName lastName".
      */
     @Test
-    void testToString() {
+    public void testToString() {
         name = new Name(first, last);
         String expectedString = name.getFirstName() + " " + name.getLastName();
         String actualString = name.toString();
 
         assertEquals(expectedString, actualString);
     }
-
 }

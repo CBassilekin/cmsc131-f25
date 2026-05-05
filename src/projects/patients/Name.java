@@ -1,4 +1,3 @@
-
 public class Name {
     private String firstName;
     private String lastName;
@@ -22,7 +21,6 @@ public class Name {
             firstName = first;
             lastName = last;
         }
-
     }
 
     /**

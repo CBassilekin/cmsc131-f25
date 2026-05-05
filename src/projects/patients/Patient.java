@@ -1,4 +1,3 @@
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -6,11 +5,11 @@ import java.util.UUID;
 
 public class Patient implements IdentifiedObject {
     private PatientIdentity identity;
-    public static UUID uuid;
+    private static UUID uuid;
     private static String first, last;
     private static String dobStr = null;
     private static Date date;
-  
+
     public Patient(PatientIdentity id) {
         if (id == null) {
             throw new IllegalArgumentException("Patient' details cannot be null");
@@ -184,11 +183,10 @@ public class Patient implements IdentifiedObject {
      * 
      * @return the patient's prescription list
      */
-    public PrescriptionList getList(PrescriptionList list, Patient pat, Patient [] patArray) {
+    public PrescriptionList getList(PrescriptionList list, Patient pat, BinarySearchTree patArray) {
         // let's match this patient's identity to our patient to return his list
-        
-            return list.findPatientList(pat, patArray);
-        }
 
+        return list.findPatientList(pat);
+    }
 
 }

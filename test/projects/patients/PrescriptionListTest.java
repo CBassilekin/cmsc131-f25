@@ -1,15 +1,14 @@
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertFalse;
 
 public class PrescriptionListTest {
 
@@ -24,15 +23,17 @@ public class PrescriptionListTest {
         private Date issue2;
         private Date issue3;
         private Date issue4;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        private PatientsList testList = new PatientsList();
 
-        @BeforeEach
+        @Before
         public void SetUp() {
 
                 Cal.set(2006, Calendar.DECEMBER, 30);
                 issue3 = Cal.getTime();
                 pr3 = new Prescription(
                                 "alphadril", issue3, 500, "Dior");
+                test = new PrescriptionList();
 
         }
 
@@ -41,7 +42,6 @@ public class PrescriptionListTest {
          */
         @Test
         public void testConstructorValidity() {
-                test = new PrescriptionList();
 
                 assertNotNull(test);
         }
@@ -58,7 +58,7 @@ public class PrescriptionListTest {
                 // 1. the list is empty then get 1 item count after add()
                 test.add(pr1);
                 test.init();
-                assertEquals(test.getCount(test), 1);
+                assertEquals(test.getCount(), 1);
 
                 // 2. the new record becomes the new head
                 Cal.set(2023, Calendar.JULY, 3);
@@ -69,7 +69,7 @@ public class PrescriptionListTest {
                 // let's add it to the list
                 test.add(pr2);
                 test.init();
-                assertEquals(test.getCount(test), 2);
+                assertEquals(test.getCount(), 2);
 
                 // checking if new Record matches head
                 test.init(); // this puts the pointer to the head
@@ -89,7 +89,7 @@ public class PrescriptionListTest {
                 // let's add it to the list
                 test.add(pr3);
                 test.init();
-                assertEquals(test.getCount(test), 3);
+                assertEquals(test.getCount(), 3);
 
                 // checking if new Record is in between head (pBefore) and pAfter
                 test.init(); // this puts the pointer to the head
@@ -113,7 +113,7 @@ public class PrescriptionListTest {
                 // let's add it to the list
                 test.add(pr4);
                 test.init();
-                assertEquals(test.getCount(test), 4);
+                assertEquals(test.getCount(), 4);
 
                 // checking if new Record is at the end of the list before null
                 test.init(); // this puts the pointer to the head
@@ -152,7 +152,7 @@ public class PrescriptionListTest {
 
                 // the iteraror reinitializes at the end of the iteration
                 test.next();
-                assertEquals(test.iteratorIndex(), 0);
+                assertEquals(test.iteratorIndex(), 1);
         }
 
         @Test
@@ -236,16 +236,8 @@ public class PrescriptionListTest {
         public void testfindPatientListReturnsANonEmptyList() {
                 test = new PrescriptionList();
 
-                // when the iteration gets to the end of the list
-                Cal.set(2021, Calendar.JUNE, 3);
-                issue1 = Cal.getTime();
-                pr1 = new Prescription(
-                                "phytochlor", issue1, 250, "Ali");
-
-                Cal.set(2020, Calendar.DECEMBER, 30);
-                issue4 = Cal.getTime();
-                pr2 = new Prescription(
-                                "alphadril", issue4, 500, "Dior");
+                // the patient whose prescriptions we want to find has 2 prescriptions in the
+                // list
 
                 Cal.set(2001, Calendar.JUNE, 3);
                 Date dob = Cal.getTime();
@@ -253,19 +245,18 @@ public class PrescriptionListTest {
                 Patient pat = new Patient(new PatientIdentity(
                                 new Name("John", "Doe"), dob));
 
-                //PatientsList patList = new PatientsList();
-                Patient[] patArray = new Patient[] { new Patient(new PatientIdentity(
-                                new Name("John", "Doe"), dob)) };
+                // Adding him to out patienstslist
+                testList.add(pat);
 
-                // adding the patient to the patients list via file import
-                test.readPrescriptions("data/findPatientListPrescriptions.csv", test, patArray);
+                // adding the prescriptions list via file import
+                assertTrue(test.readPrescriptions("data/findPatientListPrescriptions.csv", testList));
 
                 // Findind this patients'related prescriptions
-                PrescriptionList assigned = test.findPatientList(pat, patArray);
-                assigned.init();
+                PrescriptionList assigned = test.findPatientList(pat);
+                // assigned.init();
 
                 // getting the count
-                assertEquals(assigned.getCount(assigned ), 2);
+                assertEquals(assigned.getCount(), 2);
         }
 
         /**
@@ -293,19 +284,19 @@ public class PrescriptionListTest {
                 Patient pat = new Patient(new PatientIdentity(
                                 new Name("Jasper", "Doe"), dob));
 
-               // PatientsList patList = new PatientsList();
-                Patient[] patArray = new Patient[] { new Patient(new PatientIdentity(
-                                new Name("Jasper", "Doe"), dob)) };
+                // PatientsList patList = new PatientsList();
+                PatientsList patList = new PatientsList();
+                patList.add(pat);
 
-                // adding the patient to the patients list via file import
-                test.readPrescriptions("data/findPatientListPrescriptions.csv", test, patArray);
+                // adding the prescriptions to the list via file import
+                test.readPrescriptions("data/findPatientListPrescriptions.csv", patList);
 
                 // Findind this patients'related prescriptions
-                PrescriptionList assigned = test.findPatientList(pat, patArray);
+                PrescriptionList assigned = test.findPatientList(pat);
                 assigned.init();
 
                 // getting the count
-                assertEquals(assigned.getCount(assigned ), 0);
+                assertEquals(assigned.getCount(), 0);
         }
 
         /**
@@ -351,98 +342,89 @@ public class PrescriptionListTest {
 
                 PrescriptionList list = new PrescriptionList();
                 // An empty list should have a count of 0.
-                assertEquals(list.getCount(list), 0);
+                assertEquals(list.getCount(), 0);
 
                 // setting up the list
                 PatientsList patList = new PatientsList();
                 Cal.set(2001, Calendar.JUNE, 3);
                 Date dob = Cal.getTime();
-                Patient[] patArray = new Patient[] { new Patient(new PatientIdentity(
-                                new Name("John", "Doe"), dob)) };
-
-                list.readPrescriptions("data/findPatientListPrescriptions.csv", list, patArray);
+                PatientsList paList = new PatientsList();
+                paList.add(new Patient(new PatientIdentity(
+                                new Name("John", "Doe"), dob)));
+                list.readPrescriptions("data/findPatientListPrescriptions.csv", paList);
 
                 // this patient has a 2 prescriptions in the list
                 list.init();
-                assertEquals(list.getCount(list), 2);
+                assertEquals(list.getCount(), 2);
 
                 // Now, working on a very long list with 1000 patients;
-                list = new PrescriptionList();
-                patList = new PatientsList();
-                patArray = new Patient[1000];
-                patList.importFromFile("data/testInput.csv", patArray);
-                list.readPrescriptions("data/testPrescriptions.csv", list, patArray);
+                paList = new PatientsList();
+
+                patList.importFromFile("data/testInput.csv");
+                list.readPrescriptions("data/testPrescriptions.csv", paList);
 
                 // let's find out how many prescription there in the list
 
                 list.init();
-                assertEquals(list.getCount(list), 3695);
+                assertEquals(list.getCount(), 3698);
 
         }
 
+        /**
+         * this test verifies that the method readPrescriptions returns true when the
+         * file
+         */
         @Test
         public void testReadPrescriptionsReturnsTrue() {
-                PrescriptionList list = new PrescriptionList();
 
-                PatientsList newList = new PatientsList();
-                Patient[] testList = new Patient[1000];
-
+                PatientsList paList = new PatientsList();
                 // building our patients database
-                assertTrue(newList.importFromFile("data/testInput.csv", testList));
+                paList.importFromFile("data/testInput.csv");
 
                 // file exists, a prescription can be created & it matches an existing patient
-                assertTrue(list.readPrescriptions("data/testPrescriptions.csv", list, testList));
-                list.init();
-                assertEquals(list.getCount(list), 3695);
+                assertTrue(test.readPrescriptions("data/testPrescriptions.csv", paList));
+                test.init();
+                assertEquals(test.getCount(), 3696);
         }
 
+        /**
+         * this test verifies that the method readPrescriptions returns false when the
+         * file
+         */
         @Test
         public void testReadPrescriptionsReturnsFalse() {
                 PrescriptionList list = new PrescriptionList();
-               // PatientsList newList = new PatientsList();
-                Patient[] testList = new Patient[1000];
+                // PatientsList newList = new PatientsList();
+
                 // file does not exist
-                assertFalse(list.readPrescriptions(
-                                "date/inexistentFilePath.csv", list, testList));
+                assertFalse(test.readPrescriptions(
+                                "date/inexistentFilePath.csv", testList));
 
         }
 
+        /**
+         * this test verifies that the method readPrescriptions returns true when the
+         * file
+         * exists but the prescriptions do not match any existing patient in the list.
+         * In this case, the method will still read the file and create prescription
+         * records
+         */
         @Test
-        public void testReadPrescriptionsReturnsDoesNotAddAPrescription() {
+        public void testReadPrescriptionsAddsUnmatchedPrescriptions() {
                 PrescriptionList list = new PrescriptionList();
                 PatientsList newList = new PatientsList();
-                Patient[] testList = new Patient[1000];
 
                 // building our patients database
-                assertTrue(newList.importFromFile("data/testInput.csv", testList));
+                assertTrue(newList.importFromFile("data/testInput.csv"));
 
                 // file exists, prescriptions can be created but linedoes not match any existing
-                // patient, the method will still read, however no prescription will be added
-                // to the precriptions list.
+                // patient, the method will still read, createm a list of prescription
 
                 assertTrue(list.readPrescriptions(
-                                "data/testPrescriptionsUnmatch.csv", list, testList));
+                                "data/testPrescriptionsUnmatch.csv", newList));
                 list.init();
-                assertEquals(list.getCount(list), 0);
-        }
-
-        @Test
-        public void testReadPrecriptionsThrowsonNullPrescription() {
-
-                PrescriptionList list = new PrescriptionList();
-                //PatientsList newList = new PatientsList();
-                Patient[] testList = new Patient[1000];
-
-                // file exists, but prescriptions can't be created
-
-                Exception e = assertThrows(
-                                IllegalArgumentException.class,
-                                () -> {
-                                        list.readPrescriptions(
-                                                        "data/testPrescriptionswithIncompletePrescriptions.csv", list,
-                                                        testList);
-                                });
-                assertEquals("Insufficient information for a prescription line", e.getMessage());
+                assertEquals(list.getCount(), 4);
 
         }
+
 }

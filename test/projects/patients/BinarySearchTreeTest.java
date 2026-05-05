@@ -1,5 +1,5 @@
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 
 public class BinarySearchTreeTest {
@@ -14,26 +14,26 @@ public class BinarySearchTreeTest {
             this.id = id;
         }
 
-        //Helper class to create Identity for sampleObject
-    class sampleIdentity implements Identity {
+        // Helper class to create Identity for sampleObject
+        class sampleIdentity implements Identity {
             int id;
 
             sampleIdentity(int id) {
                 this.id = id;
             }
 
-            //returns true if this.id is less than other    
+            // returns true if this.id is less than other
             public boolean isLessThan(Identity other) {
                 return this.id < ((sampleIdentity) other).id;
             }
 
-            //returns true if this.id matches other.id
+            // returns true if this.id matches other.id
             public boolean match(Identity other) {
                 return id == ((sampleIdentity) other).id;
             }
         }
 
-//returns the Identity of the sampleObject
+        // returns the Identity of the sampleObject
         public Identity getIdentity() {
             return new sampleIdentity(this.id);
 
@@ -41,7 +41,7 @@ public class BinarySearchTreeTest {
     }
 
     // Set up a new BinarySearchTree before each test
-    @BeforeEach
+    @Before
     public void setUp() {
         tree = new BinarySearchTree();
     }

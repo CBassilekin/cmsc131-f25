@@ -7,7 +7,7 @@ public class Prescription {
     private Date issuedOn;
     private int medDosage;
     private String medPrescriber;
-    private PatientIdentity ID = null;
+    public PatientIdentity ID = null;
     private static PatientIdentity matchingPatient = null;
 
     public Prescription(String name, Date date, int dosage, String prescriber) {
@@ -33,24 +33,36 @@ public class Prescription {
         }
     }
 
+    /**
+     * This is the getetr method for the prescription's date.
+     */
     public Date getDate() {
         return issuedOn;
     }
 
+/**
+ * this is the getter method for the medications's name
+ */
     public String getName() {
         return medName;
     }
 
+    /**
+     * This is the getter method for the prescriber's name.
+     */
     public String getPrescriber() {
         return medPrescriber;
     }
 
+    /** this is the getetr method for the medication's dosage.
+     * 
+     */
     public int getDosage() {
         return medDosage;
     }
 
     /**
-     * Method make a new prescription from a line using token split
+     * Method makes a new prescription from a line using token split
      * 
      * @param line - provided line input from the file coming in the format
      *             patient_name, patient_dob, medicine_name, date_of_issue, dosage,
@@ -58,7 +70,7 @@ public class Prescription {
      * @return a new Prescription object
      */
 
-    public static Prescription makePrescription(String line, Patient[] patArray) {
+    public static Prescription makePrescription(String line, PatientsList patList) {
         String lastName = null;
         String firstName = null;
         Date patientDOB = null;
@@ -94,15 +106,30 @@ public class Prescription {
                 pr = new Prescription(medecineName, dateOfIssue, dosage, prescriber);
                 Name name = new Name(firstName, lastName);
 
-                // ID = new PatientIdentity(name, patientDOB);
-                pr.ID = new PatientIdentity(name, patientDOB);
-                if (pr.matchPatientFromList(pr, patArray)) {
-                    pr.ID = matchingPatient;
+                // Create the Identity to be matched with the existing patient list
+                PatientIdentity searchID = new PatientIdentity(name, patientDOB);
+
+                // Look for that patient in the patients List
+                Patient foundPatient = patList.find(searchID);
+
+                if (foundPatient != null) {
+                    pr.ID = foundPatient.getIdentity();
+                } else {
+                    // if not found, we simply keep that info
+                    pr.ID = searchID;
                 }
 
             }
             return pr;
         }
+    }
+/**
+ * This method returns the Patient ID related to a specific prescription.
+ */
+    public PatientIdentity getPatientID(Prescription pr) {
+
+        return pr.ID;
+
     }
 
     /*
@@ -110,20 +137,11 @@ public class Prescription {
      * we added a code to avoid date formatting mismatch when referring to
      * the same patient so PR.ID will always point to the existing patient DOB.
      */
-    public boolean matchPatientFromList(Prescription pr, Patient[] listArray) {
-
-        for (int i = 0; i < listArray.length; i++) {
-            matchingPatient = listArray[i].getIdentity();
-            if (pr.ID.match(matchingPatient)) {
-                pr.ID = matchingPatient;
-                return true;
-            }
+    public boolean matchPatientFromList(PatientsList list, Prescription pr) {
+        if (list == null || this.ID == null) {
+            return false;
         }
-        return false;
+        // Use the list provided in the argument to find the ID
+        return list.find(this.ID) != null;
     }
-
-    public PatientIdentity getPatientID(Prescription pr) {
-        return pr.ID;
-    }
-
 }
