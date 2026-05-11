@@ -2,6 +2,8 @@ public class HashTable {
 
     private Prescription[] hashTable;
     private int SIZE = 0;
+    private int collisionCount = 0;
+    private int collisionBeforeFinding = 0;
 
     public HashTable(int size) {
 
@@ -19,46 +21,62 @@ public class HashTable {
      * @return the index where that combination " key" can be found
      *         in our hash table
      */
-    public int hashing(String key) {
+    public int hashing(String key, boolean useFullEightBytes) {
+
+        if (key == null) {
+            return -1; // invalid input
+        }
+
+        int index = 0; // this will be the index in the hash table where we will store the interaction
+        int len = key.length(); // the length of the string key, we will use it to determine the positions of
+                                // the characters we will use to create the hashcode
+
+        // Define 8 positions with the flexibility to use only 4 for testing purposes
+        // The first reference is the first character of the string
+        // The second reference is at 1/8 of the string
+        // The third reference is at 1/4 of the string
+        // The fourth reference is at 3/8 of the string
+        // The fifth reference is at 1/2 of the string
+        // The sixth reference is at 5/8 of the string
+        // The seventh reference is at 3/4 of the string
+        // The eighth reference is the last character of the string
 
         int hashcode = 0;
-        int index = 0;
 
-        // Get the 4 characters references then their 8 lower bytes digits
-        // The first reference is the first character of the string
-        // The second reference is at 1/4 of the string
-        // The third reference is at 1/2 of the string
-        // The fourth reference is the last one
-
-        byte byFirst = (byte) key.charAt(0);
-        byte byFourth = (byte) key.charAt(key.length() / 4);
-        byte byMiddle = (byte) key.charAt(key.length() / 2);
-        byte byLast = (byte) key.charAt(key.length() - 1);
-
-        // Clearing the top bit to be positive
-        int clearedPositive = byLast & 0x7F;
-
-        // packing all four bits into the long integer to create the hashcode
-        hashcode = (clearedPositive & 0xFF) << 24 | (byMiddle & 0xFF) << 16 | (byFourth & 0xFF) << 8
-                | (byFirst & 0xFF);
+        if (useFullEightBytes) {
+            // OPTION: 8 Characters (spread across the whole string)
+            for (int i = 0; i < 8; i++) {
+                int pos = (i * (len - 1)) / 7; // Evenly spaces 8 points from start to end
+                long b = (long) key.charAt(pos) & 0xFF;
+                hashcode |= (b << (8 * (7 - i)));
+            }
+        } else {
+            // OPTION: 4 Characters (The "Classic" 4-point check)
+            int[] positions = { 0, len / 4, len / 2, len - 1 };
+            for (int i = 0; i < 4; i++) {
+                long b = (long) key.charAt(positions[i]) & 0xFF;
+                // We shift them into the 4 most significant byte slots
+                // to keep the hash "heavy"
+                hashcode |= (b << (24 - (i * 8)));
+            }
+        }
 
         // using the modular function to find the index in the hash table
 
-        index = Math.abs(hashcode) % hashTable.length;
-
+        index = (int) Math.abs(hashcode) % hashTable.length;
         return index;
 
     }
 
-    public boolean storeInteraction(String key, String contra) {
+    public boolean storeInteraction(String key, String contra, boolean useFullEightBytes) {
 
         if (key == null || contra == null) {
-            return false;
+            throw new IllegalArgumentException("Your entries are invalid. Try again!");
         }
         Prescription current = new Prescription(key, null, 0, contra);
 
         // Compute the index position for this interaction
-        int index = hashing(key);
+        int index = hashing(key, false);
         int startingIndex = index;
 
         // let's handle the case of a collision using linear probing
@@ -73,13 +91,16 @@ public class HashTable {
             // let's handle the case of a collision using linear probing
             // we may store the interaction below similar ones
             index = (index + 1) % hashTable.length;
+            collisionCount++;
 
             // if we are done going down and up the table, we may have exhausted our
             // possibilities
             if (index == startingIndex) {
-                return false;
+                return false; // table full, we can't store this interaction
             }
+
         }
+
         // we got a suitable null spot
         hashTable[index] = current;
         return true;
@@ -102,7 +123,7 @@ public class HashTable {
         }
 
         // let's check the corresponding index
-        int indexToMatch = hashing(newPrescription);
+        int indexToMatch = hashing(newPrescription, false);
         int startingIndex = indexToMatch;
 
         while (hashTable[indexToMatch] != null) {
@@ -112,12 +133,21 @@ public class HashTable {
             }
             // let's look down the table
             indexToMatch = (indexToMatch + 1) % hashTable.length;
-            // getting to the end of the table and starting back from 0.
+            collisionBeforeFinding++;
 
+            // getting to the end of the table and starting back from 0.
             if (indexToMatch == startingIndex) // we are back at the start
                 break;
         }
         return false;
     }
 
+    public int getCollisionCountDuringHashing() {
+        return collisionCount;
+    }
+
+    public int getCollisionBeforeFinding() {
+        return collisionBeforeFinding;
+
+    }
 }

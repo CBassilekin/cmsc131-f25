@@ -4,16 +4,17 @@ import java.util.Calendar;
 
 public class Main {
 
-    private static PatientsList paList;
-    private static PrescriptionList prList;
-    private static String contra = "data/Contraindicatioons.csv"
-    private static String pr = "data/prescriptions1000.csv"
+    private static PatientsList paList = new PatientsList();
+    private static PrescriptionList prList = new PrescriptionList();
+    private static String contraFile = "data/Contraindications.csv";
+    private static String pr = "data/prescriptions1000.csv";
 
     public static void main(String[] args) {
-        // phase1(); // setting the Patient
-        // phase2();
-        // phase3();
+        phase1(); // setting the Patient
+        phase2();
+        phase3();
         phase4();
+        phase5();
 
     }
 
@@ -60,8 +61,6 @@ public class Main {
     // to check if the import and export methods are working properly
     public static void phase2() {
 
-        paList = new PatientsList();
-
         System.out.println(paList.importFromFile("data/patients1000.csv"));
         System.out.println(paList.saveToFile("data/patients_out.csv"));
     }
@@ -75,7 +74,7 @@ public class Main {
         System.out.println(prList.readPrescriptions("data/prescriptions1000.csv", paList));
 
         Patient pat = paList.next();
-        PrescriptionList patPr = prList.findPatientList(pat);
+        PrescriptionList patPr = prList.findPatientList(pat, prList);
         System.out.println(patPr.getCount());
 
         patPr.init();
@@ -90,7 +89,6 @@ public class Main {
 
     // Adding Stack + a tree Structure to the project.
     public static void phase4() {
-        paList = new PatientsList();
 
         Calendar cal = Calendar.getInstance();
         cal.set(1990, Calendar.JANUARY, 1);
@@ -128,5 +126,38 @@ public class Main {
         paList.initIterator();
         System.out.println("Number of patients: " + paList.getNumPatients());
 
+    }
+
+    public static void phase5() {
+
+        // 1. Load the list of patients and prescriptions from the files.
+
+        System.out.println(paList.importFromFile("data/patients1000.csv"));
+
+        System.out.println(prList.readPrescriptions("data/prescriptions1000.csv", paList));
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(1953, Calendar.JUNE, 16);
+        Date dob1 = cal.getTime();
+        Patient pat = new Patient(new PatientIdentity(new Name("Maria", "Smith"), dob1));
+
+        Contraindications contra = new Contraindications(pat);
+        System.out.println(contra.loadHashTable(paList, contraFile, pr));
+        HashTable resultTable = contra.getPatientAllInteractions();
+
+        // 2. Check for contraindications for a new Prescription "alphamycin" specific
+        // patient and print the results - first test of the hash table function .
+        Prescription newPrescription = new Prescription("alphamycin", null, 0, "yong");
+        boolean hasContraindication = contra.isContraIndicated(newPrescription);
+        System.out
+                .println("Does the patient have contraindications for " + newPrescription.getName() + "? "
+                        + hasContraindication);
+
+        // Second test of the hash table function .
+        newPrescription = new Prescription("oxydril", null, 0, "yong");
+        hasContraindication = contra.isContraIndicated(newPrescription);
+        System.out
+                .println("Does the patient have contraindications for " + newPrescription.getName() + "? "
+                        + hasContraindication);
     }
 }

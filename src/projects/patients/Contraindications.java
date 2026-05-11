@@ -77,18 +77,18 @@ public class Contraindications {
                 String medA = interaction.getName();
                 String medB = interaction.getPrescriber();
                 if (current.getName().equalsIgnoreCase(medA)) {
-                    contraTable.storeInteraction(medA, medB);
+                    contraTable.storeInteraction(medA, medB, false);
                     // storing its symmetrical interaction at once
-                    contraTable.storeInteraction(medB, medA);
+                    contraTable.storeInteraction(medB, medA, false);
 
                     lastMedAdded = medA;
                     foundAtLeastOne = true;
                     count += 2; // Ignore Symmetrical pairs adjustment.
 
                 } else if (current.getName().equalsIgnoreCase(medB)) {
-                    contraTable.storeInteraction(medB, medA);
+                    contraTable.storeInteraction(medB, medA, false);
                     // storing its symmetrical interaction at once
-                    contraTable.storeInteraction(medA, medB);
+                    contraTable.storeInteraction(medA, medB, false);
 
                     lastMedAdded = medB;
                     foundAtLeastOne = true;
