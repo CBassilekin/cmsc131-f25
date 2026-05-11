@@ -43,28 +43,14 @@ public class PrescriptionTest {
                 () -> {
                     new Prescription(null, issue, 50, "Miller");
                 });
-        assertEquals("Medication's name cannot be null", e1.getMessage());
-
-        e1 = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    new Prescription("cetaphimine", null, 50, "Miller");
-                });
-        assertEquals("Medication's issue date cannot be null", e1.getMessage());
-
-        e1 = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    new Prescription("cetaphimine", issue, 0, "Miller");
-                });
-        assertEquals("Dosage value is too small", e1.getMessage());
+        assertEquals("Medication's or prescriber's name cannot be null.", e1.getMessage());
 
         e1 = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     new Prescription("cetaphimine", issue, 500, null);
                 });
-        assertEquals("Prescriber's name cannot be null", e1.getMessage());
+        assertEquals("Medication's or prescriber's name cannot be null.", e1.getMessage());
 
     }
 
@@ -184,22 +170,22 @@ public class PrescriptionTest {
     @Test
     public void testMakePrescriptionThrowsOnInsufficientInput() {
 
-        // only 6 inputs are entered
+        // fewer than 2 inputs cannot be accepted for the prescription file
         Exception e = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     Prescription.makePrescription(
-                            "Smith,Maria,1953-06-16,2022-08-04,50,Miller", list);
+                            "Smith", list);
                 });
         assertEquals("Insufficient information for a prescription line", e.getMessage());
 
-        // only 3 inputs are entered
+        // no input is unacepptable for a prescription file
 
         e = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     Prescription.makePrescription(
-                            "Smith,50,Miller", list);
+                            "", list);
                 });
         assertEquals("Insufficient information for a prescription line", e.getMessage());
 

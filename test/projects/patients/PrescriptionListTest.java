@@ -252,7 +252,7 @@ public class PrescriptionListTest {
                 assertTrue(test.readPrescriptions("data/findPatientListPrescriptions.csv", testList));
 
                 // Findind this patients'related prescriptions
-                PrescriptionList assigned = test.findPatientList(pat);
+                PrescriptionList assigned = test.findPatientList(pat, test);
                 // assigned.init();
 
                 // getting the count
@@ -292,7 +292,7 @@ public class PrescriptionListTest {
                 test.readPrescriptions("data/findPatientListPrescriptions.csv", patList);
 
                 // Findind this patients'related prescriptions
-                PrescriptionList assigned = test.findPatientList(pat);
+                PrescriptionList assigned = test.findPatientList(pat, test);
                 assigned.init();
 
                 // getting the count

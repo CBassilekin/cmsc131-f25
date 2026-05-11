@@ -6,6 +6,8 @@ public class Main {
 
     private static PatientsList paList;
     private static PrescriptionList prList;
+    private static String contra = "data/Contraindicatioons.csv"
+    private static String pr = "data/prescriptions1000.csv"
 
     public static void main(String[] args) {
         // phase1(); // setting the Patient
